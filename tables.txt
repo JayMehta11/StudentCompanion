@@ -1,0 +1,21 @@
+->user table
+first name,
+last name,
+email id,
+password,
+role,
+enrollment num (if student),
+
+->courses table
+course name,
+course code
+credits,
+prerequistes,
+course discription,
+faculty,
+category ids,
+ratings(array),
+
+->category table
+categoy name - (GER,core,major electives),
+category id,
