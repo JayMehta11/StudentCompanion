@@ -6,9 +6,9 @@ const app = express.Router();
 const mongoose = require('mongoose');
 const user = mongoose.model('user');
 
-// app.get('/login',(req,res)=>{
-//     res.send("Login api");
-// })
+app.get('/login',(req,res)=>{
+    res.send("Login api");
+})
 
 app.post('/register',(req,res)=>{
     console.log(req.body)
@@ -104,5 +104,6 @@ app.post('/login',(req,res) => {
         })
     })
 })
+
 
 module.exports = app

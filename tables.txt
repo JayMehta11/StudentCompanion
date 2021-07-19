@@ -19,3 +19,5 @@ ratings(array),
 ->category table
 categoy name - (GER,core,major electives),
 category id,
+
+-> TODO
