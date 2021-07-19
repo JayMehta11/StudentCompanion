@@ -1,6 +1,7 @@
 import React from 'react';
 import {BrowserRouter as Router, Switch , Route } from 'react-router-dom';
 import Home from './components/Home';
+import Todo from './components/Todo';
 import Login from './components/Login';
 import Register from './components/Register';
 
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" exact ><Home></Home></Route>
         <Route path="/login" exact><Login></Login></Route>
         <Route path="/register" exact><Register></Register></Route>
+        <Route path="/todo" exact><Todo></Todo></Route>
       </Switch>
     </Router>
   );
