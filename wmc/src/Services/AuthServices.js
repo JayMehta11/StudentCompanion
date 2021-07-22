@@ -64,4 +64,11 @@ async function LoginService(userDetails){
 }
 
 
-export {LoginService, RegisterService, currentUser}
+async function Logout(){
+    window.localStorage.removeItem("StudentToken");
+    currentUser.next(getUser());
+}
+
+
+
+export {LoginService, RegisterService, Logout, currentUser}

@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 // faculty - String,
 // category ids - Array,
 // ratings(array) - Array,
+// schedule - Array,
 
 const  courseSchema = new mongoose.Schema({
 	name: {type: String, required: true},
@@ -30,6 +31,7 @@ const  courseSchema = new mongoose.Schema({
 			comment: {type: String, required: true}
 		}
 	]
+	
 });
 
 mongoose.model('course', courseSchema);

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import './home.scss'
@@ -12,6 +12,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { cur, currentUser } from '../Services/AuthServices';
 import { HomeContext } from '../Context/HomeContext';
 import Todo from './Todos/Todo';
+import {Navigations,NavigationAdmin} from '../Navigations'
 
 function Home(props) {
   const { window } = props;
@@ -22,6 +23,15 @@ function Home(props) {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+  const [user,setUser] = useState(currentUser.value)
+    
+    useEffect(() => {
+    let AuthObservalble = currentUser.subscribe(data => setUser(data))
+
+    return () => {
+      AuthObservalble.unsubscribe();
+    }
+  },[])
   
 
   const container = window !== undefined ? () => window().document.body : undefined;
@@ -32,9 +42,7 @@ function Home(props) {
     }
   },[])
 
-  let NavigationComponent = [
-      <Todo />
-  ]
+  let NavigationComponent = user.isAdmin ? NavigationAdmin : Navigations;
 
   return (
       <div className={classes.root}>

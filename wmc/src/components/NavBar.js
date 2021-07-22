@@ -5,10 +5,11 @@ import { useState } from 'react';
 import { useLocation } from 'react-router';
 import { GlobalLoadingContext } from '../Context/GlobalLoadingContext';
 import { useStyles } from './MaterialStyles';
-import {currentUser} from '../Services/AuthServices';
+import {currentUser, Logout} from '../Services/AuthServices';
 import { toast } from 'react-toastify'
 import './home.scss'
 import { HomeContext } from '../Context/HomeContext';
+import {Navigations, NavigationAdmin} from '../Navigations';
 
 export default function NavBar(props) {
 
@@ -37,11 +38,7 @@ export default function NavBar(props) {
         setAnchorEl(null);
     }
 
-    let Navigations = [
-        "Todo",
-        "My Courses",
-        "Course Directory"
-    ]
+    
     
 
     return (
@@ -58,7 +55,7 @@ export default function NavBar(props) {
                     >
                         <MenuOutlined style={{color:"rgba(197, 199, 205, 1)"}} />
                     </IconButton>
-                    <h3>{Navigations[navigator]}</h3>
+                    <h3>{user.isAdmin ? NavigationAdmin[navigator] : Navigations[navigator]}</h3>
                 </div>
                 <div className="d-flex align-items-center navbar-user-icon">
                     <IconButton><NotificationsOutlined style={{color:"rgba(197, 199, 205, 1)"}} /></IconButton>
@@ -73,7 +70,7 @@ export default function NavBar(props) {
                         style={{marginTop: "30px"}}
                     >
                         <MenuItem onClick={handleClose}>Profile</MenuItem>
-                        <MenuItem>Logout</MenuItem>
+                        <MenuItem onCLick={Logout}>Logout</MenuItem>
                     </Menu>
                 </div>
             </div>
