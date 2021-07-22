@@ -13,6 +13,18 @@ body, #root {
   width: 100vw;
   min-height: 100vh;
   overflow-x: hidden;
+  background-color: black;
+}
+
+.global-loader {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 5000;
+}
+
+.divider {
+  border-bottom: 2px dashed #BDBDBD;
 }
 
 p, h1, h2, h3 {
@@ -22,6 +34,41 @@ p, h1, h2, h3 {
 
 .login-page {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
+}
+
+.register-page {
+  width: 100vw;
+  min-height: 100vh;
+}
+
+.confirm-dialog .confirm-dialog-title {
+  font-family: 'Mulish';
+  font-weight: bold;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 30px;
+  letter-spacing: 0.3px;
+  color: #252733;
+  -webkit-column-gap: 0.7rem;
+          column-gap: 0.7rem;
+}
+
+.confirm-dialog .confirm-dialog-title .confirm-dialog-title-icon {
+  background: rgba(245, 54, 54, 0.3) !important;
+}
+
+.confirm-dialog .confirm-dialog-title .confirm-dialog-title-icon svg {
+  fill: #F53636 !important;
+}
+
+.confirm-dialog .confirm-content {
+  font-family: 'Mulish';
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 30px;
+  letter-spacing: 0.4px;
+  color: #9FA2B4 !important;
 }
 /*# sourceMappingURL=style.css.map */

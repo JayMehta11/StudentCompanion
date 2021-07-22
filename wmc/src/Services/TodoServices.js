@@ -1,0 +1,80 @@
+async function getTodos(filter){
+
+    let formData = new FormData();
+
+    formData.append('filter',filter)
+    return fetch('http://localhost:5000/api/todo/get',{
+        method: "POST",
+        headers: {
+            'Authorization': localStorage.getItem("StudentToken"),
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filter: filter
+        })
+    }).then(res => res.json()).catch(err => {
+        return {
+            status: false,
+            message: "Unable to fetch Todos"
+        }
+    })
+}
+async function addTodos(todoDetails){
+    return fetch('http://localhost:5000/api/todo/add',{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "authorization": localStorage.getItem("StudentToken")
+        },
+        body: JSON.stringify({
+            task: todoDetails.task,
+            description: todoDetails.description
+        })
+    }).then(res => res.json()).catch(err => {
+        return {
+            status: false,
+            message: "Unable to Add Todo"
+        }
+    })
+}
+async function updateTodos(todoDetails){
+    return fetch('http://localhost:5000/api/todo/update',{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "authorization": localStorage.getItem("StudentToken")
+        },
+        body: JSON.stringify({
+            _id: todoDetails._id,
+            task: todoDetails.task,
+            description: todoDetails.description,
+            done: todoDetails.done
+        })
+    }).then(res => res.json()).catch(err => {
+        return {
+            status: false,
+            message: "Unable to Update Todo"
+        }
+    })
+}
+async function deleteTodos(idx){
+    return fetch('http://localhost:5000/api/todo/delete',{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "authorization": localStorage.getItem("StudentToken")
+        },
+        body: JSON.stringify({
+            _id: idx
+        })
+    }).then(res => res.json()).catch(err => {
+        return {
+            status: false,
+            message: "Unable to Delete Todo"
+        }
+    })
+}
+
+
+
+export {getTodos, addTodos, updateTodos, deleteTodos}

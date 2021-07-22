@@ -27,10 +27,13 @@ const Todo = mongoose.model('todo');
 
 app.post('/add', (req, res) => {
 	var decoded = jwt.verify(req.headers.authorization, '12345');
+	let createdat = parseInt(new Date().getTime() / 1000)
 	const todo = new Todo({
 		student_id: decoded.id,
 		task: req.body.task,
-		description: req.body.description
+		description: req.body.description,
+		done: false,
+		created_at: createdat
 	});
 	todo.save((err, todo) => {
 		if (err) {
@@ -97,9 +100,13 @@ app.post('/delete', (req, res) => {
 
 app.post('/get', (req, res) => {
 	const decoded = jwt.verify(req.headers.authorization, '12345');
-	Todo.find({
+	let query = {
 		student_id: decoded.id
-	}, (err, todos) => {
+	}
+	if(req.body.filter !== "All"){
+		query['done'] = req.body.filter;
+	}
+	Todo.find(query, (err, todos) => {
 		if (err) {
 			res.json({
 				status: false,
