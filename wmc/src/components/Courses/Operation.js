@@ -4,7 +4,7 @@ import React, { useState, useContext, useEffect, useRef } from 'react'
 import './course.scss'
 import {GlobalLoadingContext} from '../../Context/GlobalLoadingContext'
 import { toast } from 'react-toastify'
-import { addCourse } from '../../Services/CourseServices'
+import { addCourse, updateCourse } from '../../Services/CourseServices'
 
 export default function Operation(props) {
 
@@ -12,25 +12,27 @@ export default function Operation(props) {
         courseName: "",
         courseCode: "",
         credits: "",
-        prerequistes: [],
+        prerequisites: [],
         courseDescription: "",
         faculty: "",
         categoryIds: [],
-        schedule: []
+        schedule: [],
+        school: "Seas"
     })
     const init = {
         courseName: "",
         courseCode: "",
         credits: "",
-        prerequistes: [],
+        prerequisites: [],
         courseDescription: "",
         faculty: "",
         categoryIds: [],
-        schedule: []
+        schedule: [],
+        school: "Seas"
     }
     const {setGlobalLoading} = useContext(GlobalLoadingContext);
     const [dataIsValid,setDataIsValid] = useState(false);
-    const prerequistesRef = useRef("")
+    const prerequisitesRef = useRef("")
     const categoryRef = useRef("")
     const ScheduleDay = useRef("");
     const start = useRef("")
@@ -46,8 +48,10 @@ export default function Operation(props) {
 
     useEffect(() => {
         let isValid = true;
+        
         Object.keys(courseDetails).map(key => {
-            if(key!=="prequisites" && (courseDetails[key]==="" || courseDetails[key]===[])){
+            // console.log(key,courseDetails[key],init[key],)
+            if(key!=="prequisites" && key!=="ratings" && (courseDetails[key]==="" || courseDetails[key].length===0)){
                 isValid=false;
             }
         })
@@ -56,13 +60,13 @@ export default function Operation(props) {
 
     let DeletePrerequisites = (pre) => () => {
         let updatedList = [];
-        courseDetails.prerequistes.map(pred => {
+        courseDetails.prerequisites.map(pred => {
             if(pred !== pre){
                 updatedList.push(pred)
             }
         })
 
-        setCourseDetails({...courseDetails,prerequistes: updatedList})
+        setCourseDetails({...courseDetails,prerequisites: updatedList})
     }
     let DeleteCategory = (cat) => () => {
         let updatedList = [];
@@ -86,14 +90,14 @@ export default function Operation(props) {
     }
 
     let AddPrerequisites = () => {
-        if(prerequistesRef.current.value === ""){
+        if(prerequisitesRef.current.value === ""){
             return;
         }
-        let updatedList = courseDetails.prerequistes;
-        updatedList.push(prerequistesRef.current.value)
+        let updatedList = courseDetails.prerequisites;
+        updatedList.push(prerequisitesRef.current.value)
 
-        setCourseDetails({...courseDetails,prerequistes: updatedList})
-        prerequistesRef.current.value = ""
+        setCourseDetails({...courseDetails,prerequisites: updatedList})
+        prerequisitesRef.current.value = ""
     }
     let AddCategory = () => {
         if(categoryRef.current.value === ""){
@@ -129,14 +133,34 @@ export default function Operation(props) {
             if(AddCourseResponse.status){
                 toast.success(AddCourseResponse.message)
                 setGlobalLoading(false)
+                await props.FetchCourses()
                 props.close()
             }else{
+                console.log(AddCourseResponse)
                 toast.error(AddCourseResponse.message)
                 setGlobalLoading(false)
             }
         }catch(err){
             toast.error("Unable to Add Course")
             setGlobalLoading(false)
+        }
+    }
+    let UpdateCourse = async () => {
+        setGlobalLoading(true)
+        try{
+            let UpdateCourseResponse = await updateCourse(courseDetails);
+            setGlobalLoading(false)
+            if(UpdateCourseResponse.status){
+                toast.success(UpdateCourseResponse.message)
+                await props.updateCourse(courseDetails);
+                setCourseDetails(init)
+                props.close();
+            }else{
+                toast.error(UpdateCourseResponse.message)
+            }
+        }catch(err){
+            setGlobalLoading(false)
+            toast.error("Unable to Update Todo")
         }
     }
 
@@ -171,10 +195,10 @@ export default function Operation(props) {
                     <div className="my-2">
                         
                         <div className="d-flex align-items-end">
-                            <TextField label="Prerequisites" inputRef={prerequistesRef} />
+                            <TextField label="Prerequisites" inputRef={prerequisitesRef} />
                             <Button variant="contained" color="secondary" className="ms-3" onClick={AddPrerequisites} >Add</Button>
                         </div>
-                        {courseDetails.prerequistes.map((pre,i) => 
+                        {courseDetails.prerequisites.map((pre,i) => 
                             <Chip
                                 className="my-2"
                                 key={i}
@@ -201,6 +225,19 @@ export default function Operation(props) {
                         onChange={(e) => setCourseDetails({...courseDetails,faculty: e.target.value})}
                         required
                     /> 
+                    <TextField label="School"
+                        select
+                        className="my-2 col-lg-7 col-md-8 col-11"
+                        value={courseDetails.school}
+                        onChange={(e) => setCourseDetails({...courseDetails,school: e.target.value})}
+                        required
+                        SelectProps={{
+                            native: true
+                        }} >
+                                <option value="Seas">SEAS</option>
+                                <option value="Amsom">AMSOM</option>
+                                <option value="Sas">SAS</option>
+                    </TextField>
                     <div className="my-2">
                         
                         <div className="d-flex align-items-end">
@@ -252,7 +289,7 @@ export default function Operation(props) {
 
                 <DialogActions>
                     <Button variant="outlined" onClick={() => {setCourseDetails(init);props.close()}}>Cancel</Button>
-                    <Button variant="contained" onClick={AddCourse} disabled={!dataIsValid} color="primary">Save</Button>
+                    <Button variant="contained" onClick={props.course ? UpdateCourse : AddCourse} disabled={!dataIsValid} color="primary">Save</Button>
                 </DialogActions>
             </DialogContent>
         </Dialog>

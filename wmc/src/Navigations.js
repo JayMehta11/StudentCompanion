@@ -8,12 +8,14 @@ export const NavigationAdmin = [
 
 export const Navigations = [
     "Todos",
+    "Course",
     "My Courses",
     "Time Table"
 ]
 
 export const NavigationComponent = [
     <Todo />,
+    <Courses />
 ]
 
 export const NavigationComponentAdmin = [

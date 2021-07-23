@@ -1,6 +1,6 @@
 import { Fab, IconButton, Button, TextField } from '@material-ui/core'
-import { AccessAlarmOutlined, AddOutlined, ArrowForward, ArrowForwardIosOutlined, AssignmentTurnedInOutlined, DeleteOutlined, EditOutlined, ExpandLessOutlined, ExpandMoreOutlined, Filter, NavigateNextOutlined } from '@material-ui/icons'
-import React, { useContext, useEffect, useState } from 'react'
+import { AccessAlarmOutlined, Add, AddOutlined, ArrowForward, ArrowForwardIosOutlined, AssignmentTurnedInOutlined, DeleteOutlined, EditOutlined, ExpandLessOutlined, ExpandMoreOutlined, Filter, NavigateNextOutlined, RemoveOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 // import { deleteTodos, getTodos, updateTodos } from '../../Services/TodoServices';
 import {toast} from 'react-toastify'
 import './course.scss'
@@ -9,6 +9,9 @@ import Operation from './Operation';
 import * as moment from 'moment'
 import { GlobalLoadingContext } from '../../Context/GlobalLoadingContext';
 import ConfirmDialog from '../ConfirmDialog';
+import { addRating, deleteCourse, getCourse } from '../../Services/CourseServices'
+import { currentUser } from '../../Services/AuthServices'
+import Rating from '../Rating'
 
 export default function Courses() {
 
@@ -16,137 +19,183 @@ export default function Courses() {
     const [loading,setLoading] = useState(false);
     // const [filter,setFilter] = useState("All");
     const [openOperationDialog,setOpenOperationDialog] = useState(false);
-    // const [todoDescriptionOpen,setTodoDescriptionOpen] = useState(-1);
-    // const [todoUpdateDetails,setTodoUpdateDetails] = useState(false);
+    const [courseDescriptionOpen,setCourseDescriptionOpen] = useState(-1);
+    const [courseRatingOpen,setCourseRatingOpen] = useState(-1);
+    const [courseUpdateDetails,setCourseUpdateDetails] = useState(false);
     const {setGlobalLoading} = useContext(GlobalLoadingContext)
-    // const [ConfirmDeleteDialog,setConfirmDeleteDialog] = useState({
-    //     open: false,
-    //     idx: false
-    // });
+    const [rating,setRating] = useState(1);
+    const [ConfirmDeleteDialog,setConfirmDeleteDialog] = useState({
+        open: false,
+        idx: false
+    });
+    const [user,setUser] = useState(currentUser.value)
+    const ratingRef = useRef("")
+    
+    
+    
+
+    let Days = [
+        "Mon","Tue","Wed","Thu","Fri","Sat","Sun"
+    ]
 
     let CloseDialog = () => {
         setOpenOperationDialog(false);
+        setCourseUpdateDetails(false);
     }
-    // let CloseConfirmDeleteDialog = () => {
-    //     setConfirmDeleteDialog({
-    //         open: false,
-    //         idx: false
-    //     })
-    // }
+    let CloseConfirmDeleteDialog = () => {
+        setConfirmDeleteDialog({
+            open: false,
+            idx: false
+        })
+    }
 
-    // let getTableScaling = () => {
-    //     let todo = document.querySelectorAll(".todo-details");
-    //     let todosContainer = document.querySelector(".todos-container");
-    //     let mainContainer = document.querySelector("#main-container")
-    //     if(todo !== undefined && todosContainer!==undefined && todo.length > 0){
-    //         if(mainContainer.offsetWidth < todo[0].offsetWidth){
-    //             for(let i=0;i<todo.length;i++){
-    //                 todo[i].style.transform = `scale(${(mainContainer.offsetWidth / todo[i].offsetWidth) - 0.03})`
-    //                 todo[i].style.transformOrigin = "center center";
-    //                 todosContainer.style.rowGap = "0rem 0rem"
-    //             }
-    //         }
-    //         else{
-    //             for(let i=0;i<todo.length;i++){
-    //                 todo[i].style.transform = `scale(1)`
-    //                 todo[i].style.transformOrigin = "0% 0%"
-    //                 todosContainer.style.rowGap = "0rem 0.8rem"
-    //             }
-    //         }
+    let getTableScaling = () => {
+        let course = document.querySelectorAll(".course-details");
+        let coursesContainer = document.querySelector(".course-container");
+        let mainContainer = document.querySelector("#main-container")
+        if(course !== undefined && coursesContainer!==undefined && course.length > 0){
+            if(mainContainer.offsetWidth < course[0].offsetWidth){
+                for(let i=0;i<course.length;i++){
+                    course[i].style.transform = `scaleX(${(mainContainer.offsetWidth / course[i].offsetWidth) - 0.003})`
+                    course[i].style.transformOrigin = "center 0%";
+                    // course[i].style.marginBottom = "-1rem";
+                    // coursesContainer.style.rowGap = "0rem 0rem"
+                }
+            }
+            else{
+                for(let i=0;i<course.length;i++){
+                    course[i].style.transform = `scale(1)`
+                    course[i].style.transformOrigin = "0% 0%"
+                    coursesContainer.style.rowGap = "0rem 0.8rem"
+                }
+            }
             
-    //     }
+        }
         
-    // }
-
-    // let FetchTodos = async () => {
-    //     setLoading(true);
-    //     try{
+    }
+    console.log(courses)
+    let FetchCourses = async () => {
+        setLoading(true);
+        try{
             
-    //         let TodosResponse = await getTodos(filter);
-    //         setLoading(false);
-    //         if(TodosResponse.status){
-    //             setTodos(TodosResponse.todos)
-    //         }else{
-    //             setTodos([])
-    //             toast.error("Unable to get Todos") 
-    //         }
-    //     }catch(err){
-    //         setLoading(false);
-    //         toast.error("Unable to get Todos")
-    //     }
+            let CourseResponse = await getCourse();
+            setLoading(false);
+            if(CourseResponse.status){
+                setcourses(CourseResponse.courses)
+            }else{
+                setcourses([])
+                toast.error("Unable to get Todos") 
+            }
+        }catch(err){
+            setLoading(false);
+            toast.error("Unable to get Todos")
+        }
         
         
-    // }
+    }
 
     
 
-    // let UpdateTodoItem = (todo) => {
-    //     let updatedList = todos.map(item => 
-    //         {
-    //           if (item._id == todo._id){
-    //             return todo; //gets everything that was already in item, and updates "done"
-    //           }
-    //           return item; // else return unmodified item 
-    //         }); 
+    let UpdateCourseItem = (course) => {
+        let updatedList = courses.map(item => 
+            {
+              if (item._id == course._id){
+                return course; //gets everything that was already in item, and updates "done"
+              }
+              return item; // else return unmodified item 
+            }); 
             
-    //     setTodos(updatedList);    
-    // }
+        setcourses(updatedList);    
+    }
 
-    // let MarkComplete = async (todo) => {
-    //     setGlobalLoading(true)
-    //     todo = {...todo,done: !todo.done};
-    //     try{
-    //         let UpdateTodoResponse = await updateTodos(todo);
+    let DeleteCourse =async (idx) => {
+        CloseConfirmDeleteDialog()
+        setGlobalLoading(true);
+
+        try{
+            let DeleteCourseResponse = await deleteCourse(idx);
             
-    //         if(UpdateTodoResponse.status){
-    //             toast.success(UpdateTodoResponse.message)
-    //             await UpdateTodoItem(todo);
-    //             setGlobalLoading(false)
-    //         }else{
-    //             toast.error(UpdateTodoResponse.message)
-    //             setGlobalLoading(false)
-    //         }
-    //     }catch(err){
-    //         setGlobalLoading(false)
-    //         toast.error("Unable to Update Todo")
-    //     }
-    // }
+            if(DeleteCourseResponse.status){
+                toast.success(DeleteCourseResponse.message)
+                await FetchCourses()
+                setCourseDescriptionOpen(-1)
+                setGlobalLoading(false)
+            }else{
+                toast.error(DeleteCourseResponse.message)
+                setGlobalLoading(false)
+            }
+        }catch(err){
+            setGlobalLoading(false)
+            toast.error("Unable to Delete Course")
+        }
 
-    // let DeleteTodo =async (idx) => {
-    //     CloseConfirmDeleteDialog()
-    //     setGlobalLoading(true);
+    }
 
-    //     try{
-    //         let DeleteTodoResponse = await deleteTodos(idx);
+    let updateRating = (idx,comment,rate) => {
+        let updatedList = []
+        courses.map(course => {
             
-    //         if(DeleteTodoResponse.status){
-    //             toast.success(DeleteTodoResponse.message)
-    //             await FetchTodos()
-    //             setGlobalLoading(false)
-    //         }else{
-    //             toast.error(DeleteTodoResponse.message)
-    //             setGlobalLoading(false)
-    //         }
-    //     }catch(err){
-    //         setGlobalLoading(false)
-    //         toast.error("Unable to Delete Todo")
-    //     }
+            if(course._id === idx){
+               let temp = course;
+                temp.ratings.push({
+                    rating: rate,
+                    comment: comment
+                })
+                updatedList.push(temp);
+            }else{
+                updatedList.push(course);
+            }
+        })
+        setcourses(updatedList)
+    }
 
-    // }
+    let AddRating = async (idx) => {
+        setGlobalLoading(true);
 
-    // useEffect(() => {
-    //     FetchTodos(filter);
-    // },[filter])
+        try{
+            let AddRatingResponse = await addRating(idx,ratingRef.current.value,rating);
+            
+            if(AddRatingResponse.status){
+                toast.success(AddRatingResponse.message)
+                updateRating(idx,ratingRef.current.value,rating);
+                ratingRef.current.value = "";
+                setRating(1)
+                setGlobalLoading(false)
+            }else{
+                toast.error(AddRatingResponse.message)
+                setGlobalLoading(false)
+            }
+        }catch(err){
+            console.log(err)
+            setGlobalLoading(false)
+            toast.error("Unable to Add Rating")
+        }
+    }
 
-    // useEffect(() => {
-    //     getTableScaling();
+    const ChangeRating = (newRating) => {
+        setRating(parseInt(newRating))
+      };
+    
+      useEffect(() => {
+        let AuthObservalble = currentUser.subscribe(data => setUser(data))
+    
+        return () => {
+          AuthObservalble.unsubscribe();
+        }
+      },[])
+    useEffect(() => {
+        FetchCourses();
+    },[])
 
-    //     window.addEventListener('resize',getTableScaling)
+    useEffect(() => {
+        getTableScaling();
 
-    //     return () => {
-    //         window.removeEventListener('resize',getTableScaling)
-    //     }
-    // },[todos])
+        window.addEventListener('resize',getTableScaling)
+
+        return () => {
+            window.removeEventListener('resize',getTableScaling)
+        }
+    },[courses])
 
     // let getDate = (seconds) => {
     //     return moment(new Date(seconds * 1000)).format('DD-MM-YYYY')
@@ -154,7 +203,7 @@ export default function Courses() {
     return (
         <>
             <div className="w-100 mt-4 px-lg-5 px-md-4 px-1 d-flex justify-content-between align-items-center">
-                <Button variant="contained" onClick={() => setOpenOperationDialog(true)} startIcon={<AddOutlined />} color="primary">Add Courses</Button>
+                <Button variant="contained" onClick={() => setOpenOperationDialog(true)} startIcon={<AddOutlined />} color="primary">Add Course</Button>
                 {/* <TextField 
                     select 
                     SelectProps={{
@@ -169,65 +218,92 @@ export default function Courses() {
                 </TextField> */}
             </div>
             {courses==="loading" || loading ? <div className="w-100 mt-4 text-center"><PulseLoader size={15} margin={2} color="#36D7B7" /></div> : 
-            // <table className={`w-100 rounded-3 position-relative mt-4 table px-lg-5 px-md-4 px-1 mx-auto`} id="table">
-            //     <thead>
-            //         <th></th>
-            //         <th></th>
-            //         <th></th>
-            //         <th></th>
-            //         <th></th>
-            //     </thead>
-            //     <tbody>
-
-            //         {todos.map(todo => 
-            //             <tr>
-            //                 <td key={todo._id} style={{borderRadius: "10px",padding: "0px"}} colSpan="5">
-            //                     <tr className="w-100 justify-content-between">
-            //                         <td style={{width: "1%"}}><Fab className={"fab-button " + (todo.done ? "completed" :"not_completed")} ><AssignmentTurnedInOutlined className={(todo.done ? "completed" :"not_completed")} /></Fab></td>
-            //                         <td>{todo.task}</td>
-            //                         <td>{getDate(todo.created_at)}</td>
-            //                         <td className={todo.done ? "completed" :"not_completed"} style={{backgroundColor: "white"}}><li>{todo.done ? "Completed": "Pending"}</li></td>
-            //                         <td><IconButton><NavigateNextOutlined style={{color: "lightgrey"}} /></IconButton></td>
-            //                     </tr>
-            //                 </td>
-            //             </tr>
-                       
-            //         )}
-            //     </tbody>
-            // </table>
-            <div className="w-100 mt-4 d-flex flex-column justify-content-between align-items-center course-container px-lg-5 px-md-4 px-1 mx-auto">
+            <>
+            {courses.length===0 ? <h4 className={`text-center mt-5 no-data-found`}>No Data Found <SentimentDissatisfiedOutlined /></h4> :
+            <div className="w-100 my-4 d-flex flex-column justify-content-between align-items-center course-container px-lg-5 px-md-4 px-1 mx-auto">
+                <div className="w-100 d-flex  align-items-center py-0 header">
+                    {/* <span><Fab className={"col-1 fab-button " + (course.done ? "completed" :"not_completed")} ><AssignmentTurnedInOutlined className={(course.done ? "completed" :"not_completed")} /></Fab></span> */}
+                    <span className="col-1 text-center">{"#"}</span>
+                    <span className="col-2 text-center">{"Code"}</span>
+                    <span className="col-3 text-center" style={{textAlign: "right"}}>{"Name"}</span>
+                    <span className="col-2 text-center">{"Credits"}</span>
+                    <span className="col-3 text-center" >{"School"}</span>
+                    <span className="col-1 text-center"></span>
+                </div>
                {courses.map((course,i) => 
                     <span key={course._id} className="w-100 course-details">
-                        {/* <div className="w-100 d-flex justify-content-between align-items-center course py-0">
-                            <span><Fab className={"col-1 fab-button " + (course.done ? "completed" :"not_completed")} ><AssignmentTurnedInOutlined className={(course.done ? "completed" :"not_completed")} /></Fab></span>
-                            <span className="col-4">{course.task}</span>
-                            <span className="cl-3">{getDate(course.created_at)}</span>
-                            <span className="col-3" className={course.done ? "completed" :"not_completed"} style={{backgroundColor: "white"}}><li>{course.done ? "Completed": "Pending"}</li></span>
-                            <span className="col-1">{courseDescriptionOpen!==i ? <NavigateNextOutlined style={{color: "lightgrey",cursor: 'pointer'}} /> : <ExpandLessOutlined style={{color: "lightgrey",cursor: 'pointer'}} />}</span>
-                        </div> */}
-                        {/* {courseDescriptionOpen===i && <div className="w-100 mt-4 ps-3 todo-description">
-                            <h5>Description</h5>
-                            <p className="ps-2">{todo.description}</p>
-                            <div className="mt-3 mb-3 d-flex align-items-center flex-wrap">
-                                <Button variant="contained" onClick={() => MarkComplete(todo)} startIcon={<AssignmentTurnedInOutlined />} className="mark-completed-btn">{todo.done ? "Mark Pending" : "Mark Complted"}</Button>
-                                <Button variant="contained" startIcon={<AccessAlarmOutlined />} color="primary">Set Reminder</Button>
-                                <Button variant="outlined" onClick={async () => {
-                                    await setTodoUpdateDetails(todo);
+                        <div className="w-100 d-flex  align-items-center course py-0">
+                            {/* <span><Fab className={"col-1 fab-button " + (course.done ? "completed" :"not_completed")} ><AssignmentTurnedInOutlined className={(course.done ? "completed" :"not_completed")} /></Fab></span> */}
+                            <span className="col-1 text-center">{i+1}</span>
+                            <span className="col-2 text-center">{course.courseCode}</span>
+                            <span className="col-3 text-center">{course.courseName}</span>
+                            <span className="col-2 text-center completed" style={{backgroundColor:"white"}}><li>{course.credits}</li></span>
+                            <span className="col-3 text-center" >{course.school?.toUpperCase()}</span>
+                            <span className="col-1 text-center">{courseDescriptionOpen!==i ? <NavigateNextOutlined onClick={()=> setCourseDescriptionOpen(i)} style={{color: "lightgrey",cursor: 'pointer'}} /> : <ExpandLessOutlined onClick={()=> setCourseDescriptionOpen(-1)} style={{color: "lightgrey",cursor: 'pointer'}} />}</span>
+                        </div>
+                        {courseDescriptionOpen===i && <div className="w-100 mt-4 ps-3 mb-3 course-description">
+
+                            {user.isAdmin && <div className="mt-3 mb-3 d-flex justify-content-end align-items-center flex-wrap me-3">
+                                <Button variant="outlined" 
+                                onClick={async () => {
+                                    await setCourseUpdateDetails(course);
                                     setOpenOperationDialog(true);
-                                }} startIcon={<EditOutlined />}>Edit</Button>
-                                <Button variant="contained" onClick={() => {setConfirmDeleteDialog({
+                                }} 
+                                startIcon={<EditOutlined />}>Edit</Button>
+                                <Button variant="contained" 
+                                onClick={() => {setConfirmDeleteDialog({
                                     open: true,
-                                    idx: todo._id
-                                })}} startIcon={<DeleteOutlined />} className="delete-btn">Delete</Button>
+                                    idx: course._id
+                                })}} 
+                                startIcon={<DeleteOutlined />} className="delete-btn">Delete</Button>
+                            </div>}
+
+                            <h5>Description:</h5>
+                            <p className="px-3">{course.courseDescription}</p>
+                            <h5 className="mt-2">Prerequisites:</h5>
+                            <p className="px-3">{course.prerequisites.map((pre,i) => 
+                                `${pre}${i!==course.prerequisites.length-1 ? ",": ""}`
+                            )}</p>
+                            <h5>Faculty:</h5>
+                            <p className="px-3">{course.faculty}</p>
+                            <h5 className="mt-2">Category:</h5>
+                            <p className="px-3">{course.categoryIds.map((pre,i) => 
+                                `${pre}${i!==course.categoryIds.length-1 ? ",": ""}`
+                            )}</p>
+                            <h5 className="mt-2">Schedule:</h5>
+                            <p className="px-3 d-flex flex-column">{course.schedule.map((pre,i) => 
+                                <p>{`${Days[pre.day]}  ${pre.time}`}</p>
+                            )}</p>
+                            <h5 className="mt-2">Ratings:</h5>
+                            {courseRatingOpen!==i ? <Button color="primary" onClick={() => setCourseRatingOpen(i)} startIcon={<Add />}>Show Ratings</Button> : <Button color="primary" onClick={() => setCourseRatingOpen(-1)} startIcon={<RemoveOutlined />}>Hide Ratings</Button>}
+
+                            {courseRatingOpen===i && <div className="mt-3 d-flex flex-column rating-container">
+                                {course.ratings.map((rate,k) => 
+                                    <span key={k} className="ms-3 d-flex flex-column"><Rating readonly={true} value={rate.rating} /> {rate.comment}</span>
+                                )}
+                                    
+                            </div>}
+                            <div className="w-100 d-flex align-items-end">
+                                <TextField 
+                                    label="Comment"
+                                    inputRef={ratingRef}
+                                />
+                                <Rating 
+                                    value={rating}
+                                    setRating={(rate) => ChangeRating(rate)}
+                                />
+                                <Button variant="contained" color="secondary" onClick={() => AddRating(course._id)}>Add Rating</Button>
                             </div>
-                        </div>} */}
+                                
+
+                        </div>}
                     </span>
                )} 
             </div>
+            }</>
             }
-
-            <Operation open={openOperationDialog} close={CloseDialog} />
-            {/* <ConfirmDialog open={ConfirmDeleteDialog.open} close={CloseConfirmDeleteDialog} action={() => DeleteTodo(ConfirmDeleteDialog.idx)} /> */}
+            <Operation open={openOperationDialog} FetchCourses={FetchCourses} updateCourse={UpdateCourseItem} course={courseUpdateDetails} close={CloseDialog} />
+            <ConfirmDialog open={ConfirmDeleteDialog.open} item={"Course"} close={CloseConfirmDeleteDialog} action={() => DeleteCourse(ConfirmDeleteDialog.idx)} />
         </>
     )
 }

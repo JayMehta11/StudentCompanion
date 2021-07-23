@@ -1,5 +1,5 @@
 import { Fab, IconButton, Button, TextField } from '@material-ui/core'
-import { AccessAlarmOutlined, AddOutlined, ArrowForward, ArrowForwardIosOutlined, AssignmentTurnedInOutlined, DeleteOutlined, EditOutlined, ExpandLessOutlined, ExpandMoreOutlined, Filter, NavigateNextOutlined } from '@material-ui/icons'
+import { AccessAlarmOutlined, AddOutlined, ArrowForward, ArrowForwardIosOutlined, AssignmentTurnedInOutlined, DeleteOutlined, EditOutlined, ExpandLessOutlined, ExpandMoreOutlined, Filter, NavigateNextOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons'
 import React, { useContext, useEffect, useState } from 'react'
 import { deleteTodos, getTodos, updateTodos } from '../../Services/TodoServices';
 import {toast} from 'react-toastify'
@@ -124,6 +124,7 @@ export default function Todo() {
                 toast.success(DeleteTodoResponse.message)
                 await FetchTodos()
                 setGlobalLoading(false)
+                setTodoDescriptionOpen(-1)
             }else{
                 toast.error(DeleteTodoResponse.message)
                 setGlobalLoading(false)
@@ -170,32 +171,9 @@ export default function Todo() {
                 </TextField>
             </div>
             {todos==="loading" || loading ? <div className="w-100 mt-4 text-center"><PulseLoader size={15} margin={2} color="#36D7B7" /></div> : 
-            // <table className={`w-100 rounded-3 position-relative mt-4 table px-lg-5 px-md-4 px-1 mx-auto`} id="table">
-            //     <thead>
-            //         <th></th>
-            //         <th></th>
-            //         <th></th>
-            //         <th></th>
-            //         <th></th>
-            //     </thead>
-            //     <tbody>
-
-            //         {todos.map(todo => 
-            //             <tr>
-            //                 <td key={todo._id} style={{borderRadius: "10px",padding: "0px"}} colSpan="5">
-            //                     <tr className="w-100 justify-content-between">
-            //                         <td style={{width: "1%"}}><Fab className={"fab-button " + (todo.done ? "completed" :"not_completed")} ><AssignmentTurnedInOutlined className={(todo.done ? "completed" :"not_completed")} /></Fab></td>
-            //                         <td>{todo.task}</td>
-            //                         <td>{getDate(todo.created_at)}</td>
-            //                         <td className={todo.done ? "completed" :"not_completed"} style={{backgroundColor: "white"}}><li>{todo.done ? "Completed": "Pending"}</li></td>
-            //                         <td><IconButton><NavigateNextOutlined style={{color: "lightgrey"}} /></IconButton></td>
-            //                     </tr>
-            //                 </td>
-            //             </tr>
-                       
-            //         )}
-            //     </tbody>
-            // </table>
+            <>
+            {todos.length===0 ? <h4 className={`text-center mt-5 no-data-found`}>No Data Found <SentimentDissatisfiedOutlined /></h4> :
+            
             <div className="w-100 mt-4 d-flex flex-column justify-content-between align-items-center todos-container px-lg-5 px-md-4 px-1 mx-auto">
                {todos.map((todo,i) => 
                     <span key={todo._id} className="w-100 todo-details">
@@ -225,10 +203,11 @@ export default function Todo() {
                     </span>
                )} 
             </div>
+            }</> 
             }
 
             <OperationDialog close={CloseDialog} open={openOperationDialog} todo={todoUpdateDetails} updateTodo={UpdateTodoItem} FetchTodos={FetchTodos} />
-            <ConfirmDialog open={ConfirmDeleteDialog.open} close={CloseConfirmDeleteDialog} action={() => DeleteTodo(ConfirmDeleteDialog.idx)} />
+            <ConfirmDialog open={ConfirmDeleteDialog.open} item={"Course"} close={CloseConfirmDeleteDialog} action={() => DeleteTodo(ConfirmDeleteDialog.idx)} />
         </>
     )
 }

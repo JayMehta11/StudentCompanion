@@ -4,6 +4,16 @@
   row-gap: 0.8rem;
 }
 
+.course-container .header {
+  font-family: 'Mulish';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.2px;
+  color: #1132f0;
+  border-radius: 10px;
+}
+
 .course-container .course-details {
   background-color: white;
   border-radius: 10px;
@@ -17,24 +27,13 @@
 
 .course-container .course-details .course span {
   font-style: normal;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 14px;
   line-height: 16px;
   letter-spacing: 0.001em;
   font-family: 'Roboto Slab';
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  vertical-align: middle;
   color: #404040;
   border: none;
-  padding: 0rem 0.3rem !important;
   white-space: nowrap;
   padding-top: 5px !important;
   padding-bottom: 5px !important;
@@ -80,6 +79,20 @@
   font-size: 16px;
 }
 
+.course-container .course-details .course-description .rating-container {
+  max-height: 350px;
+  overflow-y: scroll;
+  font-family: 'Mulish';
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  color: #858585;
+}
+
+.course-container .course-details .course-description .rating-container::-webkit-scrollbar {
+  display: block !important;
+}
+
 .course-container .course-details .course-description div {
   -webkit-column-gap: 0.7rem;
           column-gap: 0.7rem;
@@ -97,19 +110,6 @@
 
 .course-container .course-details .course-description div .delete-btn:hover {
   background-color: #FFE2E3 !important;
-}
-
-.course-container .course-details .course-description div .mark-completed-btn {
-  background-color: lightgreen !important;
-  font-family: "Mulish" !important;
-  font-style: normal !important;
-  font-weight: normal !important;
-  font-size: 12px;
-  color: white !important;
-}
-
-.course-container .course-details .course-description div .mark-completed-btn:hover {
-  background-color: lightgreen !important;
 }
 
 .course-container .course-details .course-description div button {

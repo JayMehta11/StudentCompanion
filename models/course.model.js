@@ -15,20 +15,14 @@ const  courseSchema = new mongoose.Schema({
 	courseName: {type: String, required: true},
 	courseCode: {type: String, required: true},
 	credits: {type: Number, required: true},
-	prerequisites: [
-		{
-			name: {type: String, required: true},
-			code: {type: String, required: true}
-		}
-	],
+	prerequisites: [{type: String, required: true}],
 	courseDescription: {type: String, required: true},
 	faculty: {type: String, required: true},
 	categoryIds: [{type: String}],
 	ratings: [
 		{
-			studentId: {type: String, required: true},
 			rating: {type: Number, required: true},
-			comment: {type: String, required: true}
+			comment: {type: String}
 		}
 	],
 	schedule: [
@@ -36,7 +30,11 @@ const  courseSchema = new mongoose.Schema({
 			day: {type: Number,required: true},
 			time: {type: String, required: true}
 		}
-	]
+	],
+	school: {
+		type: String,
+		required: true
+	}
 	
 });
 

@@ -12,7 +12,8 @@ async function addCourse(courseDetails){
             courseDescription: courseDetails.courseDescription,
             faculty: courseDetails.faculty,
             categoryIds: courseDetails.categoryIds,
-            scedule: courseDetails.schedule
+            schedule: courseDetails.schedule,
+            school: courseDetails.school
         })
     }).then(res => res.json()).catch(err => {
         return {
@@ -21,5 +22,78 @@ async function addCourse(courseDetails){
         }
     })
 }
+async function updateCourse(courseDetails){
+    return fetch('http://localhost:5000/api/course/update',{
+        method: "POST",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+            courseName: courseDetails.courseName,
+            courseCode: courseDetails.courseCode,
+            credits: courseDetails.credits,
+            prerequisites: courseDetails.prerequisites,
+            courseDescription: courseDetails.courseDescription,
+            faculty: courseDetails.faculty,
+            categoryIds: courseDetails.categoryIds,
+            schedule: courseDetails.schedule,
+            school: courseDetails.school
+        })
+    }).then(res => res.json()).catch(err => {
+        return {
+            status: false,
+            message: "Unable to Update Course"
+        }
+    })
+}
+async function addRating(idx,comment,rating){
+    return fetch('http://localhost:5000/api/course/addRating',{
+        method: "POST",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+            _id: idx,
+            rating: {
+                rating: rating,
+                comment: comment || ""
+            }
+        })
+    }).then(res => res.json()).catch(err => {
+        return {
+            status: false,
+            message: "Unable to Add Rating"
+        }
+    })
+}
+async function deleteCourse(idx){
+    return fetch('http://localhost:5000/api/course/delete',{
+        method: "POST",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+            _id: idx
+        })
+    }).then(res => res.json()).catch(err => {
+        return {
+            status: false,
+            message: "Unable to Delete Course"
+        }
+    })
+}
+async function getCourse(){
+    return fetch('http://localhost:5000/api/course/get',{
+        method: "POST",
+        headers: {
+            "Content-Type" : "application/json"
+        }
+    }).then(res => res.json()).catch(err => {
+        return {
+            status: false,
+            message: "Unable to get Course"
+        }
+    })
+}
 
-export {addCourse}
+export {addCourse, getCourse,updateCourse,deleteCourse,addRating}
