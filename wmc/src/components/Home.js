@@ -12,7 +12,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { cur, currentUser } from '../Services/AuthServices';
 import { HomeContext } from '../Context/HomeContext';
 import Todo from './Todos/Todo';
-import {Navigations,NavigationAdmin} from '../Navigations'
+import {NavigationComponent,NavigationComponentAdmin} from '../Navigations'
 
 function Home(props) {
   const { window } = props;
@@ -42,7 +42,6 @@ function Home(props) {
     }
   },[])
 
-  let NavigationComponent = user.isAdmin ? NavigationAdmin : Navigations;
 
   return (
       <div className={classes.root}>
@@ -79,7 +78,7 @@ function Home(props) {
         </nav>
         <main className={classes.content}>
           <div className="w-100 h-100 mt-lg-5 mt-md-5 mt-4 pt-lg-3 pt-md-3 pt-4 main-container" id="main-container">
-              {NavigationComponent[navigator]}
+              {user.isAdmin ? NavigationComponentAdmin[navigator] : NavigationComponent[navigator]}
           </div>
         </main>
       </div>

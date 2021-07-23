@@ -71,7 +71,7 @@ export default function OperationDialog(props) {
                     task: "",
                     description: ""
                 }); props.close()}} style={{color: "lightgrey",cursor:"pointer"}}  /></DialogActions>
-            <DialogTitle className="dialog-title">{"Add Todo"}</DialogTitle>
+            <DialogTitle className="dialog-title">{props.todo ? "Update Todo" : "Add Todo"}</DialogTitle>
             <DialogContent>
                 <form>
                     <TextField 

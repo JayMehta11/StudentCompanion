@@ -13,3 +13,4 @@ mongoose.connect(url,{useNewUrlParser:true,useUnifiedTopology:true,useCreateInde
 require('./user.model');
 require('./todo.model');
 require('./course.model');
+require('./courseEnrollment.model')

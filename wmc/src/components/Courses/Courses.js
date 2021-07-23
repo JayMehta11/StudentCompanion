@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import {toast} from 'react-toastify'
 import './course.scss'
 import PulseLoader from 'react-spinners/PulseLoader'
-// import OperationDialog from './OperationDialog';
+import Operation from './Operation';
 import * as moment from 'moment'
 import { GlobalLoadingContext } from '../../Context/GlobalLoadingContext';
 import ConfirmDialog from '../ConfirmDialog';
@@ -15,7 +15,7 @@ export default function Courses() {
     const [courses,setcourses] = useState("loading");
     const [loading,setLoading] = useState(false);
     // const [filter,setFilter] = useState("All");
-    // const [openOperationDialog,setOpenOperationDialog] = useState(false);
+    const [openOperationDialog,setOpenOperationDialog] = useState(false);
     // const [todoDescriptionOpen,setTodoDescriptionOpen] = useState(-1);
     // const [todoUpdateDetails,setTodoUpdateDetails] = useState(false);
     const {setGlobalLoading} = useContext(GlobalLoadingContext)
@@ -24,10 +24,9 @@ export default function Courses() {
     //     idx: false
     // });
 
-    // let CloseDialog = () => {
-    //     setOpenOperationDialog(false);
-    //     setTodoUpdateDetails(false);
-    // }
+    let CloseDialog = () => {
+        setOpenOperationDialog(false);
+    }
     // let CloseConfirmDeleteDialog = () => {
     //     setConfirmDeleteDialog({
     //         open: false,
@@ -155,7 +154,7 @@ export default function Courses() {
     return (
         <>
             <div className="w-100 mt-4 px-lg-5 px-md-4 px-1 d-flex justify-content-between align-items-center">
-                <Button variant="contained" startIcon={<AddOutlined />} color="primary">Add Courses</Button>
+                <Button variant="contained" onClick={() => setOpenOperationDialog(true)} startIcon={<AddOutlined />} color="primary">Add Courses</Button>
                 {/* <TextField 
                     select 
                     SelectProps={{
@@ -199,13 +198,13 @@ export default function Courses() {
             <div className="w-100 mt-4 d-flex flex-column justify-content-between align-items-center course-container px-lg-5 px-md-4 px-1 mx-auto">
                {courses.map((course,i) => 
                     <span key={course._id} className="w-100 course-details">
-                        <div className="w-100 d-flex justify-content-between align-items-center course py-0">
+                        {/* <div className="w-100 d-flex justify-content-between align-items-center course py-0">
                             <span><Fab className={"col-1 fab-button " + (course.done ? "completed" :"not_completed")} ><AssignmentTurnedInOutlined className={(course.done ? "completed" :"not_completed")} /></Fab></span>
                             <span className="col-4">{course.task}</span>
                             <span className="cl-3">{getDate(course.created_at)}</span>
                             <span className="col-3" className={course.done ? "completed" :"not_completed"} style={{backgroundColor: "white"}}><li>{course.done ? "Completed": "Pending"}</li></span>
                             <span className="col-1">{courseDescriptionOpen!==i ? <NavigateNextOutlined style={{color: "lightgrey",cursor: 'pointer'}} /> : <ExpandLessOutlined style={{color: "lightgrey",cursor: 'pointer'}} />}</span>
-                        </div>
+                        </div> */}
                         {/* {courseDescriptionOpen===i && <div className="w-100 mt-4 ps-3 todo-description">
                             <h5>Description</h5>
                             <p className="ps-2">{todo.description}</p>
@@ -226,9 +225,9 @@ export default function Courses() {
                )} 
             </div>
             }
-{/* 
-            <OperationDialog close={CloseDialog} open={openOperationDialog} todo={todoUpdateDetails} updateTodo={UpdateTodoItem} FetchTodos={FetchTodos} />
-            <ConfirmDialog open={ConfirmDeleteDialog.open} close={CloseConfirmDeleteDialog} action={() => DeleteTodo(ConfirmDeleteDialog.idx)} /> */}
+
+            <Operation open={openOperationDialog} close={CloseDialog} />
+            {/* <ConfirmDialog open={ConfirmDeleteDialog.open} close={CloseConfirmDeleteDialog} action={() => DeleteTodo(ConfirmDeleteDialog.idx)} /> */}
         </>
     )
 }

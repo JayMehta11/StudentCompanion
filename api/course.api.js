@@ -27,13 +27,14 @@ const CourseEnrollment = mongoose.model('courseEnrollment');
 
 app.post('/add', (req, res) => {
 	const course = new Course({
-		name: req.body.name,
-		code: req.body.code,
+		courseName: req.body.courseName,
+		courseCode: req.body.courseCode,
 		credits: req.body.credits,
 		prerequisites: req.body.prerequisites,
 		courseDescription: req.body.courseDescription,
 		faculty: req.body.faculty,
-		categoryIds: req.body.categoryIds
+		categoryIds: req.body.categoryIds,
+		scedule: req.body.schedule
 	});
 	course.save(err => {
 		if (err) {

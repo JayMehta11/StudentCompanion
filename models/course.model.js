@@ -8,12 +8,12 @@ const mongoose = require('mongoose');
 // course discription - String,
 // faculty - String,
 // category ids - Array,
-// ratings(array) - Array,
 // schedule - Array,
+// ratings(array) - Array,
 
 const  courseSchema = new mongoose.Schema({
-	name: {type: String, required: true},
-	code: {type: String, required: true},
+	courseName: {type: String, required: true},
+	courseCode: {type: String, required: true},
 	credits: {type: Number, required: true},
 	prerequisites: [
 		{
@@ -29,6 +29,12 @@ const  courseSchema = new mongoose.Schema({
 			studentId: {type: String, required: true},
 			rating: {type: Number, required: true},
 			comment: {type: String, required: true}
+		}
+	],
+	schedule: [
+		{
+			day: {type: Number,required: true},
+			time: {type: String, required: true}
 		}
 	]
 	
