@@ -10,7 +10,3 @@ export const Navigations = [
     "My Courses",
     "Time Table"
 ]
-
-export NavigationComponent = [
-    <Todo />
-]
