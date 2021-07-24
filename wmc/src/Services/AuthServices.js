@@ -64,7 +64,8 @@ async function LoginService(userDetails){
 }
 
 
-async function Logout(){
+function Logout(){
+    console.log("enterd")
     window.localStorage.removeItem("StudentToken");
     currentUser.next(getUser());
 }

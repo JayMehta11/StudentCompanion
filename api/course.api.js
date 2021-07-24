@@ -27,13 +27,15 @@ const CourseEnrollment = mongoose.model('courseEnrollment');
 
 app.post('/add', (req, res) => {
 	const course = new Course({
-		name: req.body.name,
-		code: req.body.code,
+		courseName: req.body.courseName,
+		courseCode: req.body.courseCode,
 		credits: req.body.credits,
 		prerequisites: req.body.prerequisites,
 		courseDescription: req.body.courseDescription,
 		faculty: req.body.faculty,
-		categoryIds: req.body.categoryIds
+		categoryIds: req.body.categoryIds,
+		schedule: req.body.schedule,
+		school: req.body.school
 	});
 	course.save(err => {
 		if (err) {
@@ -50,19 +52,38 @@ app.post('/add', (req, res) => {
 	});
 });
 
+app.post('/get',(req,res) => {
+	Course.find((err,courses) => {
+		if (err) {
+			res.json({
+				status: false,
+				message: err
+			});
+		} else {
+			res.json({
+				status: true,
+				message: 'Course Fetched Successfully',
+				courses
+			});
+		}
+	})
+})
+
 app.post('/update', (req, res) => {
 	const course = req.body;
 	Course.findOneAndUpdate({
 		_id: course._id
 	}, {
 		$set: {
-			name: course.name,
-			code: course.code,
-			credits: course.credits,
-			prerequisites: course.prerequisites,
-			courseDescription: course.courseDescription,
-			faculty: course.faculty,
-			categoryIds: course.categoryIds
+			courseName: req.body.courseName,
+			courseCode: req.body.courseCode,
+			credits: req.body.credits,
+			prerequisites: req.body.prerequisites,
+			courseDescription: req.body.courseDescription,
+			faculty: req.body.faculty,
+			categoryIds: req.body.categoryIds,
+			schedule: req.body.schedule,
+			school: req.body.school
 		}
 	}, (err, course) => {
 		if (err) {
@@ -96,6 +117,28 @@ app.post('/delete', (req, res) => {
 		}
 	});
 });
+
+app.post('/addRating',(req,res) => {
+	Course.findOneAndUpdate({
+		_id: req.body._id
+	}, {
+		$push: {
+			ratings: req.body.rating
+		}
+	}, (err, course) => {
+		if (err) {
+			res.json({
+				status: false,
+				message: err
+			});
+		} else {
+			res.json({
+				status: true,
+				message: 'Rating Added successfully'
+			});
+		}
+	});
+})
 
 
 

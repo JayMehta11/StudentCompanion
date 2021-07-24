@@ -9,12 +9,12 @@ export default function ConfirmDialog(props){
                     <Fab className="confirm-dialog-title-icon">
                         <DeleteOutlined />
                     </Fab>
-                    Delete the Todo ?
+                    {`Delete the ${props.item} ?`}
                 </div>
             </DialogTitle>
 
             <DialogContent className="confirm-content">
-                If you delete, the Todo will be gone forever . Are you sure want to proceed?
+                {`If you delete, the ${props.item} will be gone forever . Are you sure want to proceed?`}
             </DialogContent>
 
             <DialogActions>

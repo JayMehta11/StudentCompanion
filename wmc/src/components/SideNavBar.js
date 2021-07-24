@@ -34,11 +34,11 @@ export default function SideNavBar() {
                     Todos
                 </div>
                 
-                <div onClick={() => setNavigator(2)} className={"w-100 d-flex px-4 py-3 side-nav-item" + (navigator===2 ? " active" : "")} >
+                <div onClick={() => setNavigator(1)} className={"w-100 d-flex px-4 py-3 side-nav-item" + (navigator===1 ? " active" : "")} >
                     <MenuBookOutlined />
                     Course
                 </div>
-                {!user.isAdmin && <div onClick={() => setNavigator(1)} className={"w-100 d-flex px-4 py-3 side-nav-item" + (navigator===1 ? " active" : "")} >
+                {!user.isAdmin && <div onClick={() => setNavigator(2)} className={"w-100 d-flex px-4 py-3 side-nav-item" + (navigator===2 ? " active" : "")} >
                     <EventNoteOutlined />
                     Time Table
                 </div>}
