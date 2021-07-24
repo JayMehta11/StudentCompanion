@@ -6,7 +6,7 @@ import { currentUser,LoginService } from '../Services/AuthServices';
 import {toast} from 'react-toastify';
 
 export default function Login() {
-
+    
     const [user,setUser] = useState(currentUser.value);
     const {setGlobalLoading} = useContext(GlobalLoadingContext);
     const [userDetails,setUserDetails] = useState({
@@ -46,8 +46,9 @@ export default function Login() {
 
     return (
         <>
-        {user===null && <div className="d-flex justify-content-center align-items-center login-page">
-            <form onSubmit={(e) => HandleLogin(e)} className="col-lg-5 col-md-5 col-11 px-lg-5 px-md-4 px-2 shadow bg-light py-5" >
+        {user===null && <div className="d-flex justify-content-center align-items-center login-page py-4">
+            <form onSubmit={(e) => HandleLogin(e)} className="col-lg-5 col-md-5 col-11 px-lg-5 px-md-4 px-2 shadow py-5 mb-5" >
+                <div className="text-center"><img className="mx-auto" height={150} src="guide.png"></img></div>
                 <h1 className="text-center py-2">Login</h1>
                 <TextField
                     label= "Email" 

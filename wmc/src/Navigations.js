@@ -1,5 +1,6 @@
 import Todo from "./components/Todos/Todo"
 import Courses from "./components/Courses/Courses"
+import StudentEnroll from "./components/StudentEnroll/StudentEnroll"
 
 export const NavigationAdmin = [
     "Todos",
@@ -20,5 +21,6 @@ export const NavigationComponent = [
 
 export const NavigationComponentAdmin = [
     <Todo />,
-    <Courses />
+    <Courses />,
+    <StudentEnroll />
 ]

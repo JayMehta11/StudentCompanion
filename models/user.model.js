@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
     },
     enrollmentNumber: {
         type: String,
+    },
+    programme: {
+        type: String,
+        required: true
     }
 
 })

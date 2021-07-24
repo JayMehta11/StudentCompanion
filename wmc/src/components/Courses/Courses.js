@@ -1,5 +1,5 @@
 import { Fab, IconButton, Button, TextField } from '@material-ui/core'
-import { AccessAlarmOutlined, Add, AddOutlined, ArrowForward, ArrowForwardIosOutlined, AssignmentTurnedInOutlined, DeleteOutlined, EditOutlined, ExpandLessOutlined, ExpandMoreOutlined, Filter, NavigateNextOutlined, RemoveOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons'
+import { AccessAlarmOutlined, Add, AddOutlined, ArrowForward, ArrowForwardIosOutlined, AssignmentTurnedInOutlined, DeleteOutlined, EditOutlined, ExpandLessOutlined, ExpandMoreOutlined, Filter, FirstPageOutlined, LastPageOutlined, NavigateBeforeOutlined, NavigateNextOutlined, RemoveOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 // import { deleteTodos, getTodos, updateTodos } from '../../Services/TodoServices';
 import {toast} from 'react-toastify'
@@ -30,7 +30,7 @@ export default function Courses() {
     });
     const [user,setUser] = useState(currentUser.value)
     const ratingRef = useRef("")
-    
+    const [page,setPage] = useState(0);
     
     
 
@@ -84,11 +84,11 @@ export default function Courses() {
                 setcourses(CourseResponse.courses)
             }else{
                 setcourses([])
-                toast.error("Unable to get Todos") 
+                toast.error("Unable to get Courses") 
             }
         }catch(err){
             setLoading(false);
-            toast.error("Unable to get Todos")
+            toast.error("Unable to get Courses")
         }
         
         
@@ -175,7 +175,17 @@ export default function Courses() {
     const ChangeRating = (newRating) => {
         setRating(parseInt(newRating))
       };
-    
+    let getRating = (course) => {
+        let rate = 0;
+        course.ratings.map((r,i) => {
+            rate += r.rating;
+        })
+        rate = parseInt(rate / course.ratings.length)
+        if(rate===0){
+            rate=1;
+        }
+        return rate;
+    }
       useEffect(() => {
         let AuthObservalble = currentUser.subscribe(data => setUser(data))
     
@@ -197,9 +207,7 @@ export default function Courses() {
         }
     },[courses])
 
-    // let getDate = (seconds) => {
-    //     return moment(new Date(seconds * 1000)).format('DD-MM-YYYY')
-    // }
+    
     return (
         <>
             <div className="w-100 mt-4 px-lg-5 px-md-4 px-1 d-flex justify-content-between align-items-center">
@@ -230,75 +238,88 @@ export default function Courses() {
                     <span className="col-3 text-center" >{"School"}</span>
                     <span className="col-1 text-center"></span>
                 </div>
-               {courses.map((course,i) => 
-                    <span key={course._id} className="w-100 course-details">
-                        <div className="w-100 d-flex  align-items-center course py-0">
-                            {/* <span><Fab className={"col-1 fab-button " + (course.done ? "completed" :"not_completed")} ><AssignmentTurnedInOutlined className={(course.done ? "completed" :"not_completed")} /></Fab></span> */}
-                            <span className="col-1 text-center">{i+1}</span>
-                            <span className="col-2 text-center">{course.courseCode}</span>
-                            <span className="col-3 text-center">{course.courseName}</span>
-                            <span className="col-2 text-center completed" style={{backgroundColor:"white"}}><li>{course.credits}</li></span>
-                            <span className="col-3 text-center" >{course.school?.toUpperCase()}</span>
-                            <span className="col-1 text-center">{courseDescriptionOpen!==i ? <NavigateNextOutlined onClick={()=> setCourseDescriptionOpen(i)} style={{color: "lightgrey",cursor: 'pointer'}} /> : <ExpandLessOutlined onClick={()=> setCourseDescriptionOpen(-1)} style={{color: "lightgrey",cursor: 'pointer'}} />}</span>
-                        </div>
-                        {courseDescriptionOpen===i && <div className="w-100 mt-4 ps-3 mb-3 course-description">
-
-                            {user.isAdmin && <div className="mt-3 mb-3 d-flex justify-content-end align-items-center flex-wrap me-3">
-                                <Button variant="outlined" 
-                                onClick={async () => {
-                                    await setCourseUpdateDetails(course);
-                                    setOpenOperationDialog(true);
-                                }} 
-                                startIcon={<EditOutlined />}>Edit</Button>
-                                <Button variant="contained" 
-                                onClick={() => {setConfirmDeleteDialog({
-                                    open: true,
-                                    idx: course._id
-                                })}} 
-                                startIcon={<DeleteOutlined />} className="delete-btn">Delete</Button>
-                            </div>}
-
-                            <h5>Description:</h5>
-                            <p className="px-3">{course.courseDescription}</p>
-                            <h5 className="mt-2">Prerequisites:</h5>
-                            <p className="px-3">{course.prerequisites.map((pre,i) => 
-                                `${pre}${i!==course.prerequisites.length-1 ? ",": ""}`
-                            )}</p>
-                            <h5>Faculty:</h5>
-                            <p className="px-3">{course.faculty}</p>
-                            <h5 className="mt-2">Category:</h5>
-                            <p className="px-3">{course.categoryIds.map((pre,i) => 
-                                `${pre}${i!==course.categoryIds.length-1 ? ",": ""}`
-                            )}</p>
-                            <h5 className="mt-2">Schedule:</h5>
-                            <p className="px-3 d-flex flex-column">{course.schedule.map((pre,i) => 
-                                <p>{`${Days[pre.day]}  ${pre.time}`}</p>
-                            )}</p>
-                            <h5 className="mt-2">Ratings:</h5>
-                            {courseRatingOpen!==i ? <Button color="primary" onClick={() => setCourseRatingOpen(i)} startIcon={<Add />}>Show Ratings</Button> : <Button color="primary" onClick={() => setCourseRatingOpen(-1)} startIcon={<RemoveOutlined />}>Hide Ratings</Button>}
-
-                            {courseRatingOpen===i && <div className="mt-3 d-flex flex-column rating-container">
-                                {course.ratings.map((rate,k) => 
-                                    <span key={k} className="ms-3 d-flex flex-column"><Rating readonly={true} value={rate.rating} /> {rate.comment}</span>
-                                )}
-                                    
-                            </div>}
-                            <div className="w-100 d-flex align-items-end">
-                                <TextField 
-                                    label="Comment"
-                                    inputRef={ratingRef}
-                                />
-                                <Rating 
-                                    value={rating}
-                                    setRating={(rate) => ChangeRating(rate)}
-                                />
-                                <Button variant="contained" color="secondary" onClick={() => AddRating(course._id)}>Add Rating</Button>
+               {courses.slice((10*page),Math.min(10*(page+1),courses.length)).map((course,i) => 
+                        <span key={course._id} className="w-100 course-details">
+                            <div className="w-100 d-flex  align-items-center course py-0">
+                                <span className="col-1 text-center">{i+1}</span>
+                                <span className="col-2 text-center">{course.courseCode}</span>
+                                <span className="col-3 text-center">{course.courseName}</span>
+                                <span className="col-2 text-center completed" style={{backgroundColor:"white"}}><li>{course.credits}</li></span>
+                                <span className="col-3 text-center" >{course.school?.toUpperCase()}</span>
+                                <span className="col-1 text-center">{courseDescriptionOpen!==i ? <NavigateNextOutlined onClick={()=> setCourseDescriptionOpen(i)} style={{color: "lightgrey",cursor: 'pointer'}} /> : <ExpandLessOutlined onClick={()=> setCourseDescriptionOpen(-1)} style={{color: "lightgrey",cursor: 'pointer'}} />}</span>
                             </div>
-                                
+                            {courseDescriptionOpen===i && <div className="w-100 mt-4 ps-3 mb-3 course-description">
 
-                        </div>}
-                    </span>
-               )} 
+                                {user.isAdmin && <div className="mt-3 mb-3 d-flex justify-content-end align-items-center flex-wrap me-3">
+                                    <Button variant="outlined" 
+                                    onClick={async () => {
+                                        await setCourseUpdateDetails(course);
+                                        setOpenOperationDialog(true);
+                                    }} 
+                                    startIcon={<EditOutlined />}>Edit</Button>
+                                    <Button variant="contained" 
+                                    onClick={() => {setConfirmDeleteDialog({
+                                        open: true,
+                                        idx: course._id
+                                    })}} 
+                                    startIcon={<DeleteOutlined />} className="delete-btn">Delete</Button>
+                                </div>}
+
+                                <h5>Description:</h5>
+                                <p className="px-3">{course.courseDescription}</p>
+                                <h5 className="mt-2">Prerequisites:</h5>
+                                <p className="px-3">{course.prerequisites.map((pre,i) => 
+                                    `${pre}${i!==course.prerequisites.length-1 ? ",": ""}`
+                                )}</p>
+                                <h5>Faculty:</h5>
+                                <p className="px-3">{course.faculty}</p>
+                                <h5 className="mt-2">Category:</h5>
+                                <p className="px-3">{course.categoryIds.map((pre,i) => 
+                                    `${pre}${i!==course.categoryIds.length-1 ? ",": ""}`
+                                )}</p>
+                                <h5 className="mt-2">Schedule:</h5>
+                                <p className="px-3 d-flex flex-column">{course.schedule.map((pre,i) => 
+                                    <p>{`${Days[pre.day]}  ${pre.time}`}</p>
+                                )}</p>
+                                <h5 className="mt-2">Ratings:</h5>
+
+                                {course.ratings.length!==0 &&
+                                <>
+                                <h4 className="ps-3 d-flex align-items-center"><span className="me-2">{getRating(course)}.0</span> <Rating readonly={true} value={getRating(course)} /></h4>
+                                
+                                {courseRatingOpen!==i ? <Button color="primary" onClick={() => setCourseRatingOpen(i)} startIcon={<Add />}>Show Reviews</Button> : <Button color="primary" onClick={() => setCourseRatingOpen(-1)} startIcon={<RemoveOutlined />}>Hide Reviews</Button>}
+                                </>}
+
+                                {courseRatingOpen===i && <div className="mt-3 d-flex flex-column rating-container">
+                                    {course.ratings.map((rate,k) => 
+                                        <span key={k} className="ms-3 d-flex flex-column"><Rating readonly={true} value={rate.rating} /> {rate.comment}</span>
+                                    )}
+                                        
+                                </div>}
+                                <div className="w-100 d-flex align-items-end">
+                                    <TextField 
+                                        label="Comment"
+                                        inputRef={ratingRef}
+                                    />
+                                    <Rating 
+                                        value={rating}
+                                        setRating={(rate) => ChangeRating(rate)}
+                                    />
+                                    <Button variant="contained" color="secondary" onClick={() => AddRating(course._id)}>Add Rating</Button>
+                                </div>
+                                    
+
+                            </div>}
+                        </span>
+                    )}
+
+                <div className="w-100 d-flex justify-content-end align-items-center py-0 me-2">
+                    <IconButton size="small" disabled={page===0} onClick={() => setPage(0)}><FirstPageOutlined /></IconButton>
+                    <IconButton size="small" disabled={page===0} onClick={() => setPage(prev => prev - 1)}><NavigateBeforeOutlined /></IconButton>
+                    <IconButton size="small" disabled={page===(Math.ceil((courses.length)/10) - 1)} onClick={() => setPage(prev => prev + 1)}><NavigateNextOutlined /></IconButton>
+                    <IconButton className="me-2" size="small" disabled={page===(Math.ceil((courses.length)/10) - 1)} onClick={() => setPage((Math.ceil((courses.length)/10) - 1))}><LastPageOutlined /></IconButton>
+                    {`${page+1} of ${Math.ceil((courses.length)/10)} page`}
+                </div>
             </div>
             }</>
             }

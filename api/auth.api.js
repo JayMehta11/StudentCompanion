@@ -6,8 +6,21 @@ const app = express.Router();
 const mongoose = require('mongoose');
 const user = mongoose.model('user');
 
-app.get('/login',(req,res)=>{
-    res.send("Login api");
+app.post('/get',(req,res)=>{
+    user.find({enrollmentNumber: {$ne: undefined}},(err,students) => {
+		if (err) {
+			res.json({
+				status: false,
+				message: err
+			});
+		} else {
+			res.json({
+				status: true,
+				message: 'Students Fetched Successfully',
+				students
+			});
+		}
+	})
 })
 
 app.post('/register',(req,res)=>{
@@ -23,7 +36,8 @@ app.post('/register',(req,res)=>{
                 lastName: req.body.lastName,
                 emailId: req.body.emailId,
                 isAdmin: req.body.isAdmin,
-                enrollmentNumber: req.body.enrollmentNumber
+                enrollmentNumber: req.body.enrollmentNumber,
+                programme: req.body.programme
             })
             User.save().then(doc => {
                 if(doc){

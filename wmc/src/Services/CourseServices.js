@@ -96,4 +96,36 @@ async function getCourse(){
     })
 }
 
-export {addCourse, getCourse,updateCourse,deleteCourse,addRating}
+async function enrollStudents(data,otherData,m){
+    let students = [];
+    console.log(m)
+    data.map(d => {
+        console.log(d)
+        students.push({
+            student: d.student,
+            year: parseInt(otherData.year),
+            course: m.get(otherData.course),
+            semester: otherData.semester
+        })
+    })
+
+    return fetch('http://localhost:5000/api/course/enrollInCourse',{
+        method: "POST",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+            students: students
+        })
+    }).then(res => res.json()).catch(err => {
+        return {
+            status: false,
+            message: "Unable to Enroll Students"
+        }
+    })
+
+}
+
+
+
+export {addCourse, getCourse,updateCourse,deleteCourse,addRating, enrollStudents}

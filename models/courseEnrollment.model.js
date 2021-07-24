@@ -8,8 +8,8 @@ const mongoose = require('mongoose');
 const  courseEnrollmentSchema = new mongoose.Schema({
 	student: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
 	course: { type: mongoose.Schema.Types.ObjectId, ref: 'course' },
-	semester: { type: String, default: 'Spring' },
-	year: { type: Number, default: 2017 },
+	semester: { type: String },
+	year: { type: Number },
 	created: { type: Date, default: Date.now }
 });
 

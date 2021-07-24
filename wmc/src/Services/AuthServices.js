@@ -26,7 +26,8 @@ async function RegisterService(userDetails){
             emailId: userDetails.emailId,
             isAdmin: userDetails.isAdmin,
             enrollmentNumber: userDetails.enrollmentNumber,
-            password: userDetails.password
+            password: userDetails.password,
+            programme: userDetails.programme
         })
     }).then(res => res.json()).catch(err => {
         console.log(err)

@@ -75,6 +75,26 @@ async function deleteTodos(idx){
     })
 }
 
+async function setReminder(schedule,data){
+    let d = new Date(schedule)
+    return fetch('http://localhost:5000/api/todo/reminder',{
+        method: "POST",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+            schedule: `${d.getSeconds()} ${d.getMinutes()} ${d.getHours()} ${d.getDate()} ${d.getMonth()} ${d.getDay()}`,
+            emailId: data.emailId,
+            task: data.task
+        })
+    }).then(res => res.json()).catch(err => {
+        return {
+            status: false,
+            message: "Unable to Enroll Students"
+        }
+    })
+}
 
 
-export {getTodos, addTodos, updateTodos, deleteTodos}
+
+export {getTodos, addTodos, updateTodos, deleteTodos,setReminder}
