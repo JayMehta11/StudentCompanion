@@ -20,7 +20,7 @@ export default function Operation(props) {
         let data = []
         console.log(props)
         setStudents([]);
-        // if(props.student!==undefined && props.select!==undefined){
+        
             for(let i=0;i<props.students.length;i++){
                 if(props.select.current[i].checked){
                     data.push(
@@ -30,7 +30,7 @@ export default function Operation(props) {
                     )
                 }
             }
-        // }
+        
         
         setStudents(data);
     },[])

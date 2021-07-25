@@ -1,23 +1,22 @@
-import { Fab, IconButton, Button, TextField, InputAdornment } from '@material-ui/core'
-import { AccessAlarmOutlined, Add, AddOutlined, ArrowForward, ArrowForwardIosOutlined, AssignmentTurnedInOutlined, DeleteOutlined, EditOutlined, ExpandLessOutlined, ExpandMoreOutlined, Filter, FirstPageOutlined, LastPageOutlined, NavigateBeforeOutlined, NavigateNextOutlined, RemoveOutlined, SearchOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons'
+import { Button, IconButton, InputAdornment, TextField } from '@material-ui/core'
+import { Add, AddOutlined, DeleteOutlined, EditOutlined, ExpandLessOutlined, FirstPageOutlined, LastPageOutlined, NavigateBeforeOutlined, NavigateNextOutlined, RemoveOutlined, SearchOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-// import { deleteTodos, getTodos, updateTodos } from '../../Services/TodoServices';
-import {toast} from 'react-toastify'
-import './course.scss'
 import PulseLoader from 'react-spinners/PulseLoader'
-import Operation from './Operation';
-import * as moment from 'moment'
-import { GlobalLoadingContext } from '../../Context/GlobalLoadingContext';
-import ConfirmDialog from '../ConfirmDialog';
-import { addRating, deleteCourse, getCourse } from '../../Services/CourseServices'
+
+import { toast } from 'react-toastify'
+import { GlobalLoadingContext } from '../../Context/GlobalLoadingContext'
 import { currentUser } from '../../Services/AuthServices'
+import { addRating, deleteCourse, getCourse } from '../../Services/CourseServices'
+import ConfirmDialog from '../ConfirmDialog'
 import Rating from '../Rating'
+import './course.scss'
+import Operation from './Operation'
 
 export default function Courses() {
 
     const [courses,setcourses] = useState("loading");
     const [loading,setLoading] = useState(false);
-    // const [filter,setFilter] = useState("All");
+    
     const [openOperationDialog,setOpenOperationDialog] = useState(false);
     const [courseDescriptionOpen,setCourseDescriptionOpen] = useState(-1);
     const [courseRatingOpen,setCourseRatingOpen] = useState(-1);
@@ -59,8 +58,8 @@ export default function Courses() {
                 for(let i=0;i<course.length;i++){
                     course[i].style.transform = `scaleX(${(mainContainer.offsetWidth / course[i].offsetWidth) - 0.003})`
                     course[i].style.transformOrigin = "center 0%";
-                    // course[i].style.marginBottom = "-1rem";
-                    // coursesContainer.style.rowGap = "0rem 0rem"
+                    
+                    
                 }
             }
             else{
@@ -101,9 +100,9 @@ export default function Courses() {
         let updatedList = courses.map(item => 
             {
               if (item._id == course._id){
-                return course; //gets everything that was already in item, and updates "done"
+                return course; 
               }
-              return item; // else return unmodified item 
+              return item; 
             }); 
             
         setcourses(updatedList);    

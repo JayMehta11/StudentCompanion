@@ -1,9 +1,9 @@
-import React, {useContext, useEffect, useState} from 'react'
-import {TextField,Button} from '@material-ui/core'
+import { Button, TextField } from '@material-ui/core';
+import React, { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { GlobalLoadingContext } from '../Context/GlobalLoadingContext';
-import { Link, } from 'react-router-dom';
-import { currentUser,RegisterService } from '../Services/AuthServices';
-import {toast} from 'react-toastify'
+import { currentUser, RegisterService } from '../Services/AuthServices';
 
 export default function Register() {
 

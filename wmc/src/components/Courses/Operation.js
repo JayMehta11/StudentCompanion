@@ -50,7 +50,7 @@ export default function Operation(props) {
         let isValid = true;
         
         Object.keys(courseDetails).map(key => {
-            // console.log(key,courseDetails[key],init[key],)
+            
             if(key!=="prequisites" && key!=="ratings" && (courseDetails[key]==="" || courseDetails[key].length===0)){
                 isValid=false;
             }

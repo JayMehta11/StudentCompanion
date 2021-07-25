@@ -1,15 +1,13 @@
-import { AppBar, Avatar, IconButton, Menu, MenuItem } from '@material-ui/core'
-import { ExpandMoreOutlined, MenuOutlined, NotificationsOutlined } from '@material-ui/icons';
-import React, { useContext, useEffect } from 'react'
-import { useState } from 'react';
+import { AppBar, Avatar, IconButton, Menu, MenuItem } from '@material-ui/core';
+import { ExpandMoreOutlined, MenuOutlined } from '@material-ui/icons';
+import React, { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { GlobalLoadingContext } from '../Context/GlobalLoadingContext';
-import { useStyles } from './MaterialStyles';
-import {currentUser, Logout} from '../Services/AuthServices';
-import { toast } from 'react-toastify'
-import './home.scss'
 import { HomeContext } from '../Context/HomeContext';
-import {Navigations, NavigationAdmin} from '../Navigations';
+import { NavigationAdmin, Navigations } from '../Navigations';
+import { currentUser, Logout } from '../Services/AuthServices';
+import './home.scss';
+import { useStyles } from './MaterialStyles';
 
 export default function NavBar(props) {
 
@@ -75,9 +73,9 @@ export default function NavBar(props) {
             </div>
         </AppBar>
 
-        // <div className="w-100 flex-grow-1 flex-stretch d-flex px-2 py-2 justify-content-between align-items-center navbar">
+        
             
           
-        // </div>
+        
     )
 }

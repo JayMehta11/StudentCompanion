@@ -1,8 +1,8 @@
-import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle,TextField } from '@material-ui/core'
-import { CancelOutlined, CancelSharp } from '@material-ui/icons'
-import React, { useState, useContext, useEffect, useRef } from 'react'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@material-ui/core';
+import { CancelSharp } from '@material-ui/icons';
+import React, { useRef, useState } from 'react';
 import Rating from '../Rating';
-import './course.scss'
+import './course.scss';
 
 
 export default function RatingDialog(props) {

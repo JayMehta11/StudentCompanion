@@ -1,16 +1,16 @@
-import { Fab, IconButton, Button, TextField } from '@material-ui/core'
-import { AccessAlarmOutlined, AddOutlined, ArrowForward, ArrowForwardIosOutlined, AssignmentTurnedInOutlined, DeleteOutlined, EditOutlined, ExpandLessOutlined, ExpandMoreOutlined, Filter, NavigateNextOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons'
-import React, { useContext, useEffect, useState } from 'react'
-import { deleteTodos, getTodos, updateTodos } from '../../Services/TodoServices';
-import {toast} from 'react-toastify'
-import './todo.scss'
-import PulseLoader from 'react-spinners/PulseLoader'
-import OperationDialog from './OperationDialog';
-import * as moment from 'moment'
+import { Button, Fab, TextField } from '@material-ui/core';
+import { AccessAlarmOutlined, AddOutlined, AssignmentTurnedInOutlined, DeleteOutlined, EditOutlined, ExpandLessOutlined, NavigateNextOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons';
+import * as moment from 'moment';
+import React, { useContext, useEffect, useState } from 'react';
+import PulseLoader from 'react-spinners/PulseLoader';
+import { toast } from 'react-toastify';
 import { GlobalLoadingContext } from '../../Context/GlobalLoadingContext';
-import ConfirmDialog from '../ConfirmDialog';
 import { currentUser } from '../../Services/AuthServices';
+import { deleteTodos, getTodos, updateTodos } from '../../Services/TodoServices';
+import ConfirmDialog from '../ConfirmDialog';
+import OperationDialog from './OperationDialog';
 import ReminderDilaog from './ReminderDialog';
+import './todo.scss';
 
 export default function Todo() {
 
@@ -108,9 +108,9 @@ export default function Todo() {
         let updatedList = todos.map(item => 
             {
               if (item._id == todo._id){
-                return todo; //gets everything that was already in item, and updates "done"
+                return todo; 
               }
-              return item; // else return unmodified item 
+              return item; 
             }); 
             
         setTodos(updatedList);    

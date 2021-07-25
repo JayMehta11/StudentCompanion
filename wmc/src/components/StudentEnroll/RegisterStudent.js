@@ -1,10 +1,10 @@
-import React, {useContext, useEffect, useState} from 'react'
-import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle,TextField } from '@material-ui/core'
-import { CancelSharp } from '@material-ui/icons'
-import './student.scss'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@material-ui/core';
+import { CancelSharp } from '@material-ui/icons';
+import React, { useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { GlobalLoadingContext } from '../../Context/GlobalLoadingContext';
-import { currentUser,RegisterService } from '../../Services/AuthServices';
-import {toast} from 'react-toastify'
+import { RegisterService } from '../../Services/AuthServices';
+import './student.scss';
 
 export default function RegisterStudent(props) {
 

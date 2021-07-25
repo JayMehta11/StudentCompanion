@@ -1,13 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {BrowserRouter as Router, Switch , Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import GlobalLoader from './components/GlobalLoader';
 import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
-import { currentUser } from './Services/AuthServices';
 import { GlobalLoadingContext } from './Context/GlobalLoadingContext';
-import GlobalLoader from './components/GlobalLoader';
-import {toast} from 'react-toastify';
 import HomeContextProvider from './Context/HomeContext';
+import { currentUser } from './Services/AuthServices';
 
 
 function App() {

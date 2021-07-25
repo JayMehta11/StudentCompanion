@@ -1,26 +1,24 @@
-import { Fab, IconButton, Button, TextField, Checkbox, InputAdornment } from '@material-ui/core'
-import { AccessAlarmOutlined, Add, AddOutlined, ArrowForward, ArrowForwardIosOutlined, AssignmentTurnedInOutlined, DeleteOutlined, EditOutlined, ExpandLessOutlined, ExpandMoreOutlined, Filter, FirstPageOutlined, LastPageOutlined, NavigateBeforeOutlined, NavigateNextOutlined, RemoveOutlined, SearchOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons'
+import { Button, IconButton, InputAdornment, TextField } from '@material-ui/core'
+import { AddOutlined, FirstPageOutlined, LastPageOutlined, NavigateBeforeOutlined, NavigateNextOutlined, SearchOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-// import { deleteTodos, getTodos, updateTodos } from '../../Services/TodoServices';
-import {toast} from 'react-toastify'
-import './student.scss'
 import PulseLoader from 'react-spinners/PulseLoader'
-import Operation from './Operation';
-import * as moment from 'moment'
-import { GlobalLoadingContext } from '../../Context/GlobalLoadingContext';
-import ConfirmDialog from '../ConfirmDialog';
-// import { addRating, deleteCourse, getCourse } from '../../Services/CourseServices'
+
+import { toast } from 'react-toastify'
+import { GlobalLoadingContext } from '../../Context/GlobalLoadingContext'
+
 import { currentUser } from '../../Services/AuthServices'
-import { getUsers } from '../../Services/UserServices'
 import { getCourse } from '../../Services/CourseServices'
+import { getUsers } from '../../Services/UserServices'
+import Operation from './Operation'
 import RegisterStudent from './RegisterStudent'
-// import Rating from '../Rating'
+import './student.scss'
+
 
 export default function StudentEnroll() {
 
     const [students,setStudents] = useState("loading");
     const [loading,setLoading] = useState(false);
-    // const [filter,setFilter] = useState("All");
+    
     const [openOperationDialog,setOpenOperationDialog] = useState(false);
     const [openRegisterStudentDialog,setOpenRegisterStudentDialog] = useState(false);
     const {setGlobalLoading} = useContext(GlobalLoadingContext);
@@ -167,8 +165,8 @@ export default function StudentEnroll() {
                     <span className="col-1 text-center">{"Programme"}</span>
                 </div>
                 {students.map((student,i) => 
-                    // <>
-                    // {(i>=(10*page)) && i<(Math.min(10*(page+1),students.length)) && 
+                    
+                    
                     <span key={student._id} className={"w-100 student-details "+(!((i>=(10*page)) && i<(Math.min(10*(page+1),students.length))) ? "hindrence" : "")}>
                         <div className="w-100 d-flex  align-items-center student py-0">
                             <span className="col-1 text-center">{<input type="checkbox" ref={el => selectRef.current[i]=el} />}</span>
