@@ -66,7 +66,6 @@ export default function NavBar(props) {
                         onClose={handleClose}
                         style={{marginTop: "30px"}}
                     >
-                        <MenuItem onClick={handleClose}>Profile</MenuItem>
                         <MenuItem onClick={() => Logout()}>Logout</MenuItem>
                     </Menu>
                 </div>

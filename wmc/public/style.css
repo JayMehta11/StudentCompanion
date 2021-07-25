@@ -55,14 +55,19 @@ p, h1, h2, h3 {
   color: #9FA2B4;
 }
 
+.register-page {
+  background-image: url("https://colorlib.com/etc/lf/Login_v4/images/bg-01.jpg");
+  background-size: cover;
+}
+
 .register-page form {
-  background: white;
+  background: rgba(255, 255, 255, 0.9);
   -webkit-box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
           box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  backdrop-filter: blur(7.5px);
-  -webkit-backdrop-filter: blur(7.5px);
+  backdrop-filter: blur(13px);
+  -webkit-backdrop-filter: blur(13px);
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .confirm-dialog .confirm-dialog-title {
