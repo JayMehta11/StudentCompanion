@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const url = process.env.Database
-mongoose.connect(url,{useNewUrlParser:true,useUnifiedTopology:true,useCreateIndex:true, useFindAndModify:false},(err)=>{
+mongoose.connect(url,{useNewUrlParser:true,useUnifiedTopology:true,useCreateIndex:true},(err)=>{
     if (err){
         console.log('Some error occured',err)
     }
