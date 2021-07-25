@@ -160,7 +160,7 @@ export default function Operation(props) {
             }
         }catch(err){
             setGlobalLoading(false)
-            toast.error("Unable to Update Todo")
+            toast.error("Unable to Update Course")
         }
     }
 

@@ -24,9 +24,46 @@ const jwt = require('jsonwebtoken');
 const app = require('express').Router();
 const mongoose = require('mongoose');
 const Todo = mongoose.model('todo');
+const cron = require('node-cron');
+const nodemailer = require('nodemailer');
+
+let mailOptions = {
+	from: '',
+	to: '<TO_EMAIL_ADDRESS>',
+	subject: 'Email from Node-App: A Test Message!',
+	text: 'Some content to send'
+};
+
+// e-mail transport configuration
+
+
+app.post('/reminder',(req,res) => {
+	cron.schedule(req.body.schedule,() => {
+		let transporter = nodemailer.createTransport({
+			service: "gmail",
+			secure: false,
+			auth: {
+				user: process.env.gmailId,
+				pass: process.env.gmailPass
+			}
+		});
+		transporter.sendMail({
+			from: 'guide.studentcompanion@gmail.com',
+			to: req.body.emailId,
+			subject: "REMINDER FOR THE INCOMPLETE TASK",
+			text: `This mail is sent to inform you that your task ${req.body.task} is still pending! Please complete it`
+		})
+	})
+	res.json({
+		status: true,
+		message: "Reminder set"
+	})
+
+	
+})
 
 app.post('/add', (req, res) => {
-	var decoded = jwt.verify(req.headers.authorization, '12345');
+	var decoded = jwt.verify(req.headers.authorization, process.env.secret);
 	let createdat = parseInt(new Date().getTime() / 1000)
 	const todo = new Todo({
 		student_id: decoded.id,
@@ -99,7 +136,7 @@ app.post('/delete', (req, res) => {
 
 
 app.post('/get', (req, res) => {
-	const decoded = jwt.verify(req.headers.authorization, '12345');
+	const decoded = jwt.verify(req.headers.authorization, process.env.secret);
 	let query = {
 		student_id: decoded.id
 	}

@@ -3,6 +3,7 @@ import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import './home.scss'
 import { useStyles } from './MaterialStyles';
+import PulseLoader from 'react-spinners/PulseLoader'
 
 import { useTheme } from '@material-ui/core/styles';
 import SideNavBar from './SideNavBar';
@@ -78,7 +79,7 @@ function Home(props) {
         </nav>
         <main className={classes.content}>
           <div className="w-100 mt-lg-5 mt-md-5 mt-4 pt-lg-3 pt-md-3 pt-4 main-container" id="main-container">
-              {user.isAdmin ? NavigationComponentAdmin[navigator] : NavigationComponent[navigator]}
+              {(user==="loading" || user===null) ? <div className="w-100 mt-4 text-center"><PulseLoader size={15} margin={2} color="#36D7B7" /></div> : <>{user.isAdmin ? NavigationComponentAdmin[navigator] : NavigationComponent[navigator]} </>}
           </div>
         </main>
       </div>

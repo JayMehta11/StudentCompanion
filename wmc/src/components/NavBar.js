@@ -58,7 +58,6 @@ export default function NavBar(props) {
                     <h3>{user.isAdmin ? NavigationAdmin[navigator] : Navigations[navigator]}</h3>
                 </div>
                 <div className="d-flex align-items-center navbar-user-icon">
-                    <IconButton><NotificationsOutlined style={{color:"rgba(197, 199, 205, 1)"}} /></IconButton>
                     <span className="d-flex align-items-center" onClick={handleClick}>
                         <Avatar className={'avatar'} variant="circle">{user && user.emailId?.split(' ').map(word => word.charAt(0).toUpperCase())}</Avatar>
                         <ExpandMoreOutlined style={{color:"rgba(54, 123, 245, 1)"}} />

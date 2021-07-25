@@ -4,10 +4,28 @@ const bcrypt = require('bcrypt');
 const express = require('express');
 const app = express.Router();
 const mongoose = require('mongoose');
+const { query } = require('express');
 const user = mongoose.model('user');
 
-app.get('/login',(req,res)=>{
-    res.send("Login api");
+app.post('/get',(req,res)=>{
+    let query = {enrollmentNumber: {$ne: undefined}};
+    if(req.body.search !== undefined && req.body.search!==""){
+        query = {enrollmentNumber: {$ne: undefined},$text: {$search: req.body.search}}
+    }
+    user.find(query,(err,students) => {
+		if (err) {
+			res.json({
+				status: false,
+				message: err
+			});
+		} else {
+			res.json({
+				status: true,
+				message: 'Students Fetched Successfully',
+				students
+			});
+		}
+	})
 })
 
 app.post('/register',(req,res)=>{
@@ -23,7 +41,8 @@ app.post('/register',(req,res)=>{
                 lastName: req.body.lastName,
                 emailId: req.body.emailId,
                 isAdmin: req.body.isAdmin,
-                enrollmentNumber: req.body.enrollmentNumber
+                enrollmentNumber: req.body.enrollmentNumber,
+                programme: req.body.programme
             })
             User.save().then(doc => {
                 if(doc){
@@ -69,7 +88,7 @@ app.post('/login',(req,res) => {
                         isAdmin : data.isAdmin,
                         enrollmentNumber : data.enrollmentNumber
                     }
-                    jwt.sign(userPayload, "12345",(err,token) => {
+                    jwt.sign(userPayload, process.env.secret,(err,token) => {
                         if(err){
                             res.json({
                                 status: false,

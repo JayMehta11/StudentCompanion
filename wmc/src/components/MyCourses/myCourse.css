@@ -1,3 +1,8 @@
+.credits-button {
+  background-color: white !important;
+  color: #63e786 !important;
+}
+
 .course-container {
   overflow-x: scroll !important;
   max-width: 100vw !important;
@@ -138,4 +143,4 @@
 .operation-dialog input, .operation-dialog label, .operation-dialog Button {
   font-family: "Roboto Slab";
 }
-/*# sourceMappingURL=course.css.map */
+/*# sourceMappingURL=myCourse.css.map */

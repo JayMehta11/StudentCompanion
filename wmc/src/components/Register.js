@@ -17,7 +17,8 @@ export default function Register() {
         isAdmin: false,
         password: "",
         enrollmentNumber: "",
-        confirmPassword: ""
+        confirmPassword: "",
+        programme: "B.Tech"
     })
 
     useEffect(() => {
@@ -66,8 +67,10 @@ export default function Register() {
     return (
         <>
         {user===null && <div className="d-flex justify-content-center align-items-center register-page">
-            <form onSubmit={(e) => HandleRegister(e)} className="col-lg-5 col-md-5 col-11 px-lg-5 px-md-4 px-2 mt-5 shadow bg-light py-5" >
-                <h1 className="text-center py-2">Regsiter</h1>
+            <form onSubmit={(e) => HandleRegister(e)} className="col-lg-5 col-md-5 col-11 px-lg-5 px-md-4 px-2 mt-5 shadow py-5" >
+                
+            <div className="text-center"><img className="mx-auto" height={150} src="guide.png"></img></div>
+            <h1 className="text-center py-2" color="secondary">Regsiter</h1>
                 <TextField
                     label= "First Name" 
                     required
@@ -92,6 +95,30 @@ export default function Register() {
                     value={userDetails.enrollmentNumber}
                     onChange={(e) => setUserDetails({...userDetails,enrollmentNumber: e.target.value})}
                 />
+                <TextField
+                    label= "Programme" 
+                    required
+                    select
+                    SelectProps={{
+                        native:true
+                    }}
+                    className = "mx-3 mb-3 col-10"
+                    value={userDetails.programme}
+                    onChange={(e) => setUserDetails({...userDetails,programme:e.target.value})}
+                >
+                    <option value="B.Tech">
+                        B.Tech 
+                    </option>
+                    <option value="BS Hons">
+                        Bs Hons 
+                    </option>
+                    <option value="BA">
+                        BA 
+                    </option>
+                    <option value="B.B.A">
+                        B.B.A 
+                    </option>
+                </TextField>
                 <TextField
                     label= "Email" 
                     required

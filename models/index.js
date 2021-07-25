@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const url = 'mongodb+srv://YashJay:YashJay@cluster0.ttiqs.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+const url = process.env.Database
 mongoose.connect(url,{useNewUrlParser:true,useUnifiedTopology:true,useCreateIndex:true},(err)=>{
     if (err){
         console.log('Some error occured',err)

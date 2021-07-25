@@ -53,7 +53,11 @@ app.post('/add', (req, res) => {
 });
 
 app.post('/get',(req,res) => {
-	Course.find((err,courses) => {
+	let query = {};
+	if(req.body.search !== undefined && req.body.search !== ""){
+		query = {$text: {$search: req.body.search}}
+	}
+	Course.find(query,(err,courses) => {
 		if (err) {
 			res.json({
 				status: false,
@@ -154,31 +158,42 @@ app.post('/addRating',(req,res) => {
 // Should contain semesters and year information
 
 app.post('/enrollInCourse', (req, res) => {
-	const student = req.body.student;
-	const course = req.body.course;
-	const semester = req.body.semester;
-	const year = req.body.year;
-	const created = req.body.created;
-	const enrollment = new CourseEnrollment({
-		student: student,
-		course: course,
-		semester: semester,
-		year: year,
-		created: created
-	});
-	enrollment.save(err => {
-		if (err) {
-			res.json({
-				status: false,
-				message: err
-			});
-		} else {
-			res.json({
-				status: true,
-				message: 'Course Enrollment added successfully'
-			});
-		}
-	});
+	// const student = req.body.student;
+	// const course = req.body.course;
+	// const semester = req.body.semester;
+	// const year = req.body.year;
+	// const created = req.body.created;
+	// const enrollment = new CourseEnrollment({
+	// 	student: student,
+	// 	course: course,
+	// 	semester: semester,
+	// 	year: year,
+	// 	created: created
+	// });
+	// enrollment.save(err => {
+	// 	if (err) {
+	// 		res.json({
+	// 			status: false,
+	// 			message: err
+	// 		});
+	// 	} else {
+	// 		res.json({
+	// 			status: true,
+	// 			message: 'Course Enrollment added successfully'
+	// 		});
+	// 	}
+	// });
+	CourseEnrollment.insertMany(req.body.students).then(data => {
+		res.json({
+			status: true,
+			message: 'Course Enrollment added successfully'
+		});
+	}).catch(err => {
+		res.json({
+			status: false,
+			message: 'Course Enrollment Failed'
+		});
+	})
 });
 
 app.post('/deleteEnrollment', (req, res) => {
@@ -202,18 +217,21 @@ app.post('/deleteEnrollment', (req, res) => {
 // Get all course enrollments for semester and student
 // use mongodb aggregation to get all courses for a given semester
 
-app.post('/enrolledIn', (req, res) => {
-	const semester = req.body.semester;
-	const year = req.body.year;
-	const student = req.body.student;
+app.post('/enrolledIn', (req, res) => {;
+	var decoded = jwt.verify(req.headers.authorization, process.env.secret);
+	let query = {
+		student: mongoose.Types.ObjectId(decoded.id)
+	}
+	if(req.body.semester !== "" && req.body.semester !== undefined){
+		query['semester'] = req.body.semester
+	}
+	if(req.body.year !== "" && req.body.year !== undefined){
+		query['year'] = req.body.year
+	}
 	CourseEnrollment.aggregate([
-		{$match: {
-			semester: semester,
-			year: year,
-			student: student
-		}},
+		{$match: query},
 		{$lookup: {
-			from: 'course',
+			from: 'courses',
 			localField: 'course',
 			foreignField: '_id',
 			as: 'course'

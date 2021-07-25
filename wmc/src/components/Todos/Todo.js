@@ -9,13 +9,21 @@ import OperationDialog from './OperationDialog';
 import * as moment from 'moment'
 import { GlobalLoadingContext } from '../../Context/GlobalLoadingContext';
 import ConfirmDialog from '../ConfirmDialog';
+import { currentUser } from '../../Services/AuthServices';
+import ReminderDilaog from './ReminderDialog';
 
 export default function Todo() {
 
     const [todos,setTodos] = useState("loading");
+    const [user,setUser] = useState(currentUser.value)
     const [loading,setLoading] = useState(false);
     const [filter,setFilter] = useState("All");
     const [openOperationDialog,setOpenOperationDialog] = useState(false);
+    const [openReminderDialog,setOpenReminderDialog] = useState({
+        open: false,
+        task: false,
+        emailId: user.emailId || ""
+    });
     const [todoDescriptionOpen,setTodoDescriptionOpen] = useState(-1);
     const [todoUpdateDetails,setTodoUpdateDetails] = useState(false);
     const {setGlobalLoading} = useContext(GlobalLoadingContext)
@@ -24,9 +32,24 @@ export default function Todo() {
         idx: false
     });
 
+    useEffect(() => {
+        let AuthObservalble = currentUser.subscribe(data => setUser(data))
+    
+        return () => {
+          AuthObservalble.unsubscribe();
+        }
+      },[])
+
     let CloseDialog = () => {
         setOpenOperationDialog(false);
         setTodoUpdateDetails(false);
+    }
+    let CloseReminderDialog = () => {
+        setOpenReminderDialog({
+            open: false,
+            task: false,
+            emailId: user.emailId || ""
+        })
     }
     let CloseConfirmDeleteDialog = () => {
         setConfirmDeleteDialog({
@@ -189,7 +212,11 @@ export default function Todo() {
                             <p className="ps-2">{todo.description}</p>
                             <div className="mt-3 mb-3 d-flex align-items-center flex-wrap">
                                 <Button variant="contained" onClick={() => MarkComplete(todo)} startIcon={<AssignmentTurnedInOutlined />} className="mark-completed-btn">{todo.done ? "Mark Pending" : "Mark Complted"}</Button>
-                                <Button variant="contained" startIcon={<AccessAlarmOutlined />} color="primary">Set Reminder</Button>
+                                <Button variant="contained" onClick={() => setOpenReminderDialog({
+                                    open: true,
+                                    task: todo.task,
+                                    emailId: user.emailId
+                                })} startIcon={<AccessAlarmOutlined />} color="primary">Set Reminder</Button>
                                 <Button variant="outlined" onClick={async () => {
                                     await setTodoUpdateDetails(todo);
                                     setOpenOperationDialog(true);
@@ -205,7 +232,7 @@ export default function Todo() {
             </div>
             }</> 
             }
-
+            {openReminderDialog.open && <ReminderDilaog open={openReminderDialog.open} task={openReminderDialog.task} emailId={openReminderDialog.emailId} close={CloseReminderDialog} />}
             <OperationDialog close={CloseDialog} open={openOperationDialog} todo={todoUpdateDetails} updateTodo={UpdateTodoItem} FetchTodos={FetchTodos} />
             <ConfirmDialog open={ConfirmDeleteDialog.open} item={"Course"} close={CloseConfirmDeleteDialog} action={() => DeleteTodo(ConfirmDeleteDialog.idx)} />
         </>
