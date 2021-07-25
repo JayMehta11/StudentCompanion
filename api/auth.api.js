@@ -4,10 +4,15 @@ const bcrypt = require('bcrypt');
 const express = require('express');
 const app = express.Router();
 const mongoose = require('mongoose');
+const { query } = require('express');
 const user = mongoose.model('user');
 
 app.post('/get',(req,res)=>{
-    user.find({enrollmentNumber: {$ne: undefined}},(err,students) => {
+    let query = {enrollmentNumber: {$ne: undefined}};
+    if(req.body.search !== undefined && req.body.search!==""){
+        query = {enrollmentNumber: {$ne: undefined},$text: {$search: req.body.search}}
+    }
+    user.find(query,(err,students) => {
 		if (err) {
 			res.json({
 				status: false,
@@ -83,7 +88,7 @@ app.post('/login',(req,res) => {
                         isAdmin : data.isAdmin,
                         enrollmentNumber : data.enrollmentNumber
                     }
-                    jwt.sign(userPayload, "12345",(err,token) => {
+                    jwt.sign(userPayload, process.env.secret,(err,token) => {
                         if(err){
                             res.json({
                                 status: false,

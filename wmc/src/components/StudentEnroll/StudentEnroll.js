@@ -1,5 +1,5 @@
-import { Fab, IconButton, Button, TextField, Checkbox } from '@material-ui/core'
-import { AccessAlarmOutlined, Add, AddOutlined, ArrowForward, ArrowForwardIosOutlined, AssignmentTurnedInOutlined, DeleteOutlined, EditOutlined, ExpandLessOutlined, ExpandMoreOutlined, Filter, FirstPageOutlined, LastPageOutlined, NavigateBeforeOutlined, NavigateNextOutlined, RemoveOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons'
+import { Fab, IconButton, Button, TextField, Checkbox, InputAdornment } from '@material-ui/core'
+import { AccessAlarmOutlined, Add, AddOutlined, ArrowForward, ArrowForwardIosOutlined, AssignmentTurnedInOutlined, DeleteOutlined, EditOutlined, ExpandLessOutlined, ExpandMoreOutlined, Filter, FirstPageOutlined, LastPageOutlined, NavigateBeforeOutlined, NavigateNextOutlined, RemoveOutlined, SearchOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 // import { deleteTodos, getTodos, updateTodos } from '../../Services/TodoServices';
 import {toast} from 'react-toastify'
@@ -13,6 +13,7 @@ import ConfirmDialog from '../ConfirmDialog';
 import { currentUser } from '../../Services/AuthServices'
 import { getUsers } from '../../Services/UserServices'
 import { getCourse } from '../../Services/CourseServices'
+import RegisterStudent from './RegisterStudent'
 // import Rating from '../Rating'
 
 export default function StudentEnroll() {
@@ -21,25 +22,23 @@ export default function StudentEnroll() {
     const [loading,setLoading] = useState(false);
     // const [filter,setFilter] = useState("All");
     const [openOperationDialog,setOpenOperationDialog] = useState(false);
-    // const [courseDescriptionOpen,setCourseDescriptionOpen] = useState(-1);
-    // const [courseRatingOpen,setCourseRatingOpen] = useState(-1);
-    // const [courseUpdateDetails,setCourseUpdateDetails] = useState(false);
+    const [openRegisterStudentDialog,setOpenRegisterStudentDialog] = useState(false);
     const {setGlobalLoading} = useContext(GlobalLoadingContext);
     const selectAllResf = useRef("");
-    const selectRef = useRef([]);
-    // const [rating,setRating] = useState(1);
-    // const [ConfirmDeleteDialog,setConfirmDeleteDialog] = useState({
-    //     open: false,
-    //     idx: false
-    // });
     const [user,setUser] = useState(currentUser.value)
-    // const ratingRef = useRef("")
+    const selectRef = useRef([])
     const [page,setPage] = useState(0);
-    const [dataToShow,setDataToShow] = useState([]);
-    const [selectState,setSelectState] = useState(selectRef);
     const [courses,setcourses] = useState([]);
+    const searchTerm = useRef("")
+    const [dataToshow,setDataToShow] = useState([]);
     
-
+    useEffect(() => {
+        let AuthObservalble = currentUser.subscribe(data => setUser(data))
+    
+        return () => {
+          AuthObservalble.unsubscribe();
+        }
+      },[])
     let Days = [
         "Mon","Tue","Wed","Thu","Fri","Sat","Sun"
     ]
@@ -47,12 +46,9 @@ export default function StudentEnroll() {
     let CloseDialog = () => {
         setOpenOperationDialog(false);
     }
-    // let CloseConfirmDeleteDialog = () => {
-    //     setConfirmDeleteDialog({
-    //         open: false,
-    //         idx: false
-    //     })
-    // }
+    let CloseRegisterStudentDialog = () => {
+        setOpenRegisterStudentDialog(false);
+    }
 
     let getTableScaling = () => {
         let student = document.querySelectorAll(".student-details");
@@ -61,10 +57,8 @@ export default function StudentEnroll() {
         if(student !== undefined && studentsContainer!==undefined && student.length > 0){
             if(mainContainer.offsetWidth < student[0].offsetWidth){
                 for(let i=0;i<student.length;i++){
-                    student[i].style.transform = `scaleX(${(mainContainer.offsetWidth / student[i].offsetWidth) - 0.003})`
+                    student[i].style.transform = `scale(${(mainContainer.offsetWidth / student[i].offsetWidth) - 0.03})`
                     student[i].style.transformOrigin = "center 0%";
-                    // student[i].style.marginBottom = "-1rem";
-                    // studentsContainer.style.rowGap = "0rem 0rem"
                 }
             }
             else{
@@ -78,7 +72,6 @@ export default function StudentEnroll() {
         }
         
     }
-    console.log(students)
     let FetchCourses = async () => {
             getCourse().then(CourseResponse => {
                 if(CourseResponse.status){
@@ -97,137 +90,37 @@ export default function StudentEnroll() {
         setLoading(true);
         try{
             
-            let StudentResponse = await getUsers();
+            let StudentResponse = await getUsers(searchTerm.current.value);
             setLoading(false);
+            console.log(StudentResponse)
             if(StudentResponse.status){
                 setStudents(StudentResponse.students)
-                let data = [];
-                for(let i=0;i<StudentResponse.students.length;i++){
-                    let student = StudentResponse.students[i];
-                    data.push(
-                        <span key={student._id} className="w-100 student-details">
-                            <div className="w-100 d-flex  align-items-center student py-0">
-                                <span className="col-1 text-center">{<input type="checkbox" color="primary" ref={el => selectRef.current[i]=el} />}</span>
-                                <span className="col-3 text-center">{student.enrollmentNumber}</span>
-                                <span className="col-3 text-center">{student.firstName}</span>
-                                <span className="col-3 text-center" >{student.emailId}</span>
-                                <span className="col-2 text-center" >{student.programme}</span>
-                            </div>
-                        </span>
-                    )
-                }
-                setDataToShow(data);
             }else{
                 setStudents([])
                 toast.error("Unable to get Students") 
             }
         }catch(err){
             setLoading(false);
+            console.log(err)
             toast.error("Unable to get Students")
         }
         
         
     }
 
-    
+    let ChangeSelect = (e,i) => {
+        let dp = students;
+        dp[i] = {...dp[i],checked: e.target.checked};
+        console.log(dp[i])
+        setStudents(dp);
+    }
 
-    // let UpdatestudentItem = (course) => {
-    //     let updatedList = courses.map(item => 
-    //         {
-    //           if (item._id == course._id){
-    //             return course; //gets everything that was already in item, and updates "done"
-    //           }
-    //           return item; // else return unmodified item 
-    //         }); 
-            
-    //     setcourses(updatedList);    
-    // }
-
-    // let DeleteCourse =async (idx) => {
-    //     CloseConfirmDeleteDialog()
-    //     setGlobalLoading(true);
-
-    //     try{
-    //         let DeleteCourseResponse = await deleteCourse(idx);
-            
-    //         if(DeleteCourseResponse.status){
-    //             toast.success(DeleteCourseResponse.message)
-    //             await FetchCourses()
-    //             setCourseDescriptionOpen(-1)
-    //             setGlobalLoading(false)
-    //         }else{
-    //             toast.error(DeleteCourseResponse.message)
-    //             setGlobalLoading(false)
-    //         }
-    //     }catch(err){
-    //         setGlobalLoading(false)
-    //         toast.error("Unable to Delete Course")
-    //     }
-
-    // }
-
-    // let updateRating = (idx,comment,rate) => {
-    //     let updatedList = []
-    //     courses.map(course => {
-            
-    //         if(course._id === idx){
-    //            let temp = course;
-    //             temp.ratings.push({
-    //                 rating: rate,
-    //                 comment: comment
-    //             })
-    //             updatedList.push(temp);
-    //         }else{
-    //             updatedList.push(course);
-    //         }
-    //     })
-    //     setcourses(updatedList)
-    // }
-
-    // let AddRating = async (idx) => {
-    //     setGlobalLoading(true);
-
-    //     try{
-    //         let AddRatingResponse = await addRating(idx,ratingRef.current.value,rating);
-            
-    //         if(AddRatingResponse.status){
-    //             toast.success(AddRatingResponse.message)
-    //             updateRating(idx,ratingRef.current.value,rating);
-    //             ratingRef.current.value = "";
-    //             setRating(1)
-    //             setGlobalLoading(false)
-    //         }else{
-    //             toast.error(AddRatingResponse.message)
-    //             setGlobalLoading(false)
-    //         }
-    //     }catch(err){
-    //         console.log(err)
-    //         setGlobalLoading(false)
-    //         toast.error("Unable to Add Rating")
-    //     }
-    // }
-
-    // const ChangeRating = (newRating) => {
-    //     setRating(parseInt(newRating))
-    //   };
-    // let getRating = (course) => {
-    //     let rate = 0;
-    //     course.ratings.map((r,i) => {
-    //         rate += r.rating;
-    //     })
-    //     rate = (rate / course.ratings.length)
-    //     if(rate===0){
-    //         rate=1;
-    //     }
-    //     return rate.toFixed(1)
-    // }
-      useEffect(() => {
-        let AuthObservalble = currentUser.subscribe(data => setUser(data))
-    
-        return () => {
-          AuthObservalble.unsubscribe();
+    let HandleSelectAll = () => {
+        for(let i=0;i<selectRef.current.length;i++){
+            selectRef.current[i].checked = selectAllResf.current.checked;
         }
-      },[])
+    }
+     
     useEffect(() => {
         FetchCourses();
         FetchStudents();
@@ -244,24 +137,22 @@ export default function StudentEnroll() {
     },[students])
 
     
+    console.log("Select",students)
     return (
         <>
-            <div className="w-100 mt-4 px-lg-5 px-md-4 px-1 d-flex justify-content-between align-items-center">
+            <div className="w-100 mt-4 px-lg-5 px-md-4 px-1 d-flex flex-wrap justify-content-between align-items-center">
                 <Button variant="contained" 
-                // onClick={() => setOpenOperationDialog(true)}
+                onClick={() => setOpenRegisterStudentDialog(true)}
                  startIcon={<AddOutlined />} color="primary">Add Student</Button>
-                {/* <TextField 
-                    select 
-                    SelectProps={{
-                        native: true
+                <TextField 
+                    inputRef={searchTerm}
+                    label="Search"
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment><SearchOutlined style={{cursor: 'pointer'}} onClick={() => FetchStudents()} /></InputAdornment>
+                        )
                     }}
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                >
-                    <option value="All">All</option>
-                    <option value={true}>Completed</option>
-                    <option value={false}>Pending</option>
-                </TextField> */}
+                />
             </div>
             {students==="loading" || loading ? <div className="w-100 mt-4 text-center"><PulseLoader size={15} margin={2} color="#36D7B7" /></div> : 
             <>
@@ -269,34 +160,27 @@ export default function StudentEnroll() {
             <div className="w-100 my-4 d-flex flex-column justify-content-between align-items-center student-container px-lg-5 px-md-4 px-1 mx-auto">
                 <div className="w-100 d-flex  align-items-center py-0 header">
                     {/* <span><Fab className={"col-1 fab-button " + (course.done ? "completed" :"not_completed")} ><AssignmentTurnedInOutlined className={(course.done ? "completed" :"not_completed")} /></Fab></span> */}
-                    <span className="col-1 text-center"><input ref={selectAllResf} type="checkbox" onChange={(e) => {
-                            
-                            for(let i=0;i<selectRef.current.length;i++){
-                                selectRef.current[i].checked = selectAllResf.current.checked;
-                            }
-                        }
-                    } style={{color: '#0d6efd'}} /></span>
+                    <span className="col-1 text-center"><input ref={selectAllResf} type="checkbox" onChange={(e) => HandleSelectAll()} style={{color: '#0d6efd'}} /></span>
                     <span className="col-3 text-center">{"Id"}</span>
                     <span className="col-3 text-center" style={{textAlign: "right"}}>{"Name"}</span>
-                    <span className="col-3 text-center">{"Email-id"}</span>
-                    <span className="col-2 text-center">{"Programme"}</span>
+                    <span className="col-4 text-center">{"Email-id"}</span>
+                    <span className="col-1 text-center">{"Programme"}</span>
                 </div>
-               {dataToShow.slice((10*page),Math.min(10*(page+1),students.length)).map((student,i) => 
-                        // <span key={student._id} className="w-100 student-details">
-                        //     <div className="w-100 d-flex  align-items-center student py-0">
-                        //         <span className="col-1 text-center">{<Checkbox />}</span>
-                        //         <span className="col-3 text-center">{student.enrollmentNumber}</span>
-                        //         <span className="col-3 text-center">{student.firstName}</span>
-                        //         <span className="col-3 text-center" >{student.emailId}</span>
-                        //         <span className="col-2 text-center" >{student.programme}</span>
-                        //     </div>
-                        // </span>
-                        student
-                    )}
-
+                {students.map((student,i) => 
+                    // <>
+                    // {(i>=(10*page)) && i<(Math.min(10*(page+1),students.length)) && 
+                    <span key={student._id} className={"w-100 student-details "+(!((i>=(10*page)) && i<(Math.min(10*(page+1),students.length))) ? "hindrence" : "")}>
+                        <div className="w-100 d-flex  align-items-center student py-0">
+                            <span className="col-1 text-center">{<input type="checkbox" ref={el => selectRef.current[i]=el} />}</span>
+                            <span className="col-3 text-center">{student.enrollmentNumber}</span>
+                            <span className="col-3 text-center">{student.firstName}</span>
+                            <span className="col-4 text-center" >{student.emailId}</span>
+                            <span className="col-1 text-center" >{student.programme}</span>
+                        </div>
+                    </span>
+                )}    
                 <div className="w-100 d-flex justify-content-between align-items-center py-0 mx-2">
                     <Button variant="contained" onClick={async () => {
-                        await setSelectState(selectRef)
                         setOpenOperationDialog(true)
                         }} color="secondary">Action</Button>
 
@@ -308,14 +192,14 @@ export default function StudentEnroll() {
                     </div>
                 </div>
 
-                {/* <div></div> */}
             </div>
             
             }
             
             </>
             }
-            {openOperationDialog && <Operation open={openOperationDialog} students={students} courses={courses} select={selectState} close={CloseDialog} />}
+            {openRegisterStudentDialog && <RegisterStudent FetchStudents={FetchStudents} open={openRegisterStudentDialog} close={CloseRegisterStudentDialog} />}
+            {openOperationDialog && <Operation open={openOperationDialog} students={students} select={selectRef} courses={courses} close={CloseDialog} />}
             {/* <ConfirmDialog open={ConfirmDeleteDialog.open} item={"Course"} close={CloseConfirmDeleteDialog} action={() => DeleteCourse(ConfirmDeleteDialog.idx)} /> */}
         </>
     )

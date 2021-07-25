@@ -1,6 +1,5 @@
 import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle,TextField } from '@material-ui/core'
-// import Autocomplete from '@material-ui/lab/Autocomplete';
-import { CancelOutlined, CancelSharp } from '@material-ui/icons'
+import { CancelSharp } from '@material-ui/icons'
 import React, { useState, useContext, useEffect, useRef } from 'react'
 import './student.scss'
 import {GlobalLoadingContext} from '../../Context/GlobalLoadingContext'
@@ -19,6 +18,7 @@ export default function Operation(props) {
 
     useEffect(() => {
         let data = []
+        console.log(props)
         setStudents([]);
         // if(props.student!==undefined && props.select!==undefined){
             for(let i=0;i<props.students.length;i++){
@@ -65,7 +65,7 @@ export default function Operation(props) {
     return (
         <Dialog open={props.open} fullWidth className="operation-dialog">
             <DialogActions><CancelSharp onClick={() => {props.close()}} style={{color: "lightgrey",cursor:"pointer"}}  /></DialogActions>
-            <DialogTitle className="dialog-title">{props.course ? "Update Course" : "Add Course"}</DialogTitle>
+            <DialogTitle className="dialog-title">{"Enroll Students"}</DialogTitle>
             <DialogContent>
                 <form>
                     <h5 className={students.length===0 ? "text-danger" : "text-success"}>{`${students.length} students are selected`}</h5>

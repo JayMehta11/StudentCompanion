@@ -1,54 +1,62 @@
 import { Fab, IconButton, Button, TextField, InputAdornment } from '@material-ui/core'
-import { AccessAlarmOutlined, Add, AddOutlined, ArrowForward, ArrowForwardIosOutlined, AssignmentTurnedInOutlined, DeleteOutlined, EditOutlined, ExpandLessOutlined, ExpandMoreOutlined, Filter, FirstPageOutlined, LastPageOutlined, NavigateBeforeOutlined, NavigateNextOutlined, RemoveOutlined, SearchOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons'
+import { AccessAlarmOutlined, Add, AddOutlined, ArrowForward, ArrowForwardIosOutlined, AssignmentTurnedInOutlined, CheckCircle, DeleteOutlined, EditOutlined, ExpandLessOutlined, ExpandMoreOutlined, Filter, FirstPageOutlined, LastPageOutlined, NavigateBeforeOutlined, NavigateNextOutlined, RemoveOutlined, SearchOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 // import { deleteTodos, getTodos, updateTodos } from '../../Services/TodoServices';
 import {toast} from 'react-toastify'
-import './course.scss'
+import './myCourse.scss'
 import PulseLoader from 'react-spinners/PulseLoader'
-import Operation from './Operation';
+// import Operation from './Operation';
 import * as moment from 'moment'
 import { GlobalLoadingContext } from '../../Context/GlobalLoadingContext';
-import ConfirmDialog from '../ConfirmDialog';
-import { addRating, deleteCourse, getCourse } from '../../Services/CourseServices'
+// import ConfirmDialog from '../ConfirmDialog';
+// import { addRating, deleteCourse, getCourse } from '../../Services/CourseServices'
 import { currentUser } from '../../Services/AuthServices'
 import Rating from '../Rating'
+import { addRating, getEnrolledIn } from '../../Services/CourseServices'
 
-export default function Courses() {
+export default function MyCourses() {
 
     const [courses,setcourses] = useState("loading");
     const [loading,setLoading] = useState(false);
     // const [filter,setFilter] = useState("All");
-    const [openOperationDialog,setOpenOperationDialog] = useState(false);
+    // const [openOperationDialog,setOpenOperationDialog] = useState(false);
     const [courseDescriptionOpen,setCourseDescriptionOpen] = useState(-1);
     const [courseRatingOpen,setCourseRatingOpen] = useState(-1);
-    const [courseUpdateDetails,setCourseUpdateDetails] = useState(false);
+    // const [courseUpdateDetails,setCourseUpdateDetails] = useState(false);
     const {setGlobalLoading} = useContext(GlobalLoadingContext)
     const [rating,setRating] = useState(1);
-    const [ConfirmDeleteDialog,setConfirmDeleteDialog] = useState({
-        open: false,
-        idx: false
-    });
+    // const [ConfirmDeleteDialog,setConfirmDeleteDialog] = useState({
+    //     open: false,
+    //     idx: false
+    // });
     const [user,setUser] = useState(currentUser.value)
     const ratingRef = useRef("")
     const [page,setPage] = useState(0);
-    const searchTerm = useRef("");
+    const [credits,setCredits] = useState(0)
+    const [semester,setSemester] = useState("");
+    const [year,setYear] = useState(parseInt(moment().format('YYYY')))
+    useEffect(() => {
+        let AuthObservalble = currentUser.subscribe(data => setUser(data))
     
-    
+        return () => {
+          AuthObservalble.unsubscribe();
+        }
+      },[])
 
     let Days = [
         "Mon","Tue","Wed","Thu","Fri","Sat","Sun"
     ]
 
-    let CloseDialog = () => {
-        setOpenOperationDialog(false);
-        setCourseUpdateDetails(false);
-    }
-    let CloseConfirmDeleteDialog = () => {
-        setConfirmDeleteDialog({
-            open: false,
-            idx: false
-        })
-    }
+    // let CloseDialog = () => {
+    //     setOpenOperationDialog(false);
+    //     setCourseUpdateDetails(false);
+    // }
+    // let CloseConfirmDeleteDialog = () => {
+    //     setConfirmDeleteDialog({
+    //         open: false,
+    //         idx: false
+    //     })
+    // }
 
     let getTableScaling = () => {
         let course = document.querySelectorAll(".course-details");
@@ -76,13 +84,22 @@ export default function Courses() {
     }
     console.log(courses)
     let FetchCourses = async () => {
+        if(user!=="loading" && user!==null){
+
+        
         setLoading(true);
         try{
-            
-            let CourseResponse = await getCourse(searchTerm.current.value);
+            let CourseResponse = await getEnrolledIn(semester,year);
             setLoading(false);
+            console.log(CourseResponse)
             if(CourseResponse.status){
-                setcourses(CourseResponse.courses)
+                let temp = 0;
+                CourseResponse.enrollments.map(c => {
+                    temp += parseInt(c.course[0].credits)
+                })
+                setCredits(temp)
+                setcourses(CourseResponse.enrollments)
+
             }else{
                 setcourses([])
                 toast.error("Unable to get Courses") 
@@ -91,45 +108,8 @@ export default function Courses() {
             setLoading(false);
             toast.error("Unable to get Courses")
         }
-        
-        
-    }
-
-    
-
-    let UpdateCourseItem = (course) => {
-        let updatedList = courses.map(item => 
-            {
-              if (item._id == course._id){
-                return course; //gets everything that was already in item, and updates "done"
-              }
-              return item; // else return unmodified item 
-            }); 
-            
-        setcourses(updatedList);    
-    }
-
-    let DeleteCourse =async (idx) => {
-        CloseConfirmDeleteDialog()
-        setGlobalLoading(true);
-
-        try{
-            let DeleteCourseResponse = await deleteCourse(idx);
-            
-            if(DeleteCourseResponse.status){
-                toast.success(DeleteCourseResponse.message)
-                await FetchCourses()
-                setCourseDescriptionOpen(-1)
-                setGlobalLoading(false)
-            }else{
-                toast.error(DeleteCourseResponse.message)
-                setGlobalLoading(false)
-            }
-        }catch(err){
-            setGlobalLoading(false)
-            toast.error("Unable to Delete Course")
         }
-
+        
     }
 
     let updateRating = (idx,comment,rate) => {
@@ -187,16 +167,10 @@ export default function Courses() {
         }
         return rate;
     }
-      useEffect(() => {
-        let AuthObservalble = currentUser.subscribe(data => setUser(data))
-    
-        return () => {
-          AuthObservalble.unsubscribe();
-        }
-      },[])
+     
     useEffect(() => {
         FetchCourses();
-    },[])
+    },[semester,year])
 
     useEffect(() => {
         getTableScaling();
@@ -211,85 +185,105 @@ export default function Courses() {
     
     return (
         <>
-            <div className="w-100 mt-4 px-lg-5 px-md-4 px-1 d-flex justify-content-between align-items-center">
-                <Button variant="contained" onClick={() => setOpenOperationDialog(true)} startIcon={<AddOutlined />} color="primary">Add Course</Button>
-                <TextField 
-                    inputRef={searchTerm}
-                    label="Search"
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment><SearchOutlined style={{cursor: 'pointer'}} onClick={() => FetchCourses()} /></InputAdornment>
-                        )
-                    }}
-                />
-            </div>
-            {courses==="loading" || loading ? <div className="w-100 mt-4 text-center"><PulseLoader size={15} margin={2} color="#36D7B7" /></div> : 
+        {courses==="loading" || loading ? <div className="w-100 mt-4 text-center"><PulseLoader size={15} margin={2} color="#36D7B7" /></div> :
             <>
+            <div className="w-100 mt-4 px-lg-5 px-md-4 px-1 d-flex justify-content-between align-items-end">
+                <Button className="credits-button" variant="contained" startIcon={<CheckCircle style={{color: "rgb(99, 231, 134)"}} />} disabled>
+                    credits: {credits}
+                </Button>
+                <div className="d-flex flex-wrap align-items-start mt-2">
+                    <TextField
+                        label="Semester"
+                        select
+                        focused
+                        value={semester}
+                        className="me-2 mb-2"
+                        onChange={(e) => setSemester(e.target.value)}
+                        SelectProps={{
+                            native: true
+                        }}
+                    >
+                        <option value="">All</option>
+                        <option value="Monsoon">Monsoon</option>
+                        <option value="Winter">Winter</option>
+                        <option value="Summer">Summer</option>
+                    </TextField>
+                    <TextField
+                        label="Year"
+                        select
+                        focused
+                        value={year}
+                        onChange={(e) => setYear(e.target.value)}
+                        SelectProps={{
+                            native: true
+                        }}
+                    >
+                        <option value="">All</option>
+                        <option value={parseInt(moment().format('YYYY')) - 3}>{parseInt(moment().format('YYYY')) - 3}</option>
+                        <option value={parseInt(moment().format('YYYY')) - 2}>{parseInt(moment().format('YYYY')) - 2}</option>
+                        <option value={parseInt(moment().format('YYYY')) - 1}>{parseInt(moment().format('YYYY')) - 1}</option>
+                        <option value={parseInt(moment().format('YYYY'))}>{parseInt(moment().format('YYYY'))}</option>
+                        <option value={parseInt(moment().format('YYYY')) + 1}>{parseInt(moment().format('YYYY')) + 1}</option>
+                        <option value={parseInt(moment().format('YYYY')) + 2}>{parseInt(moment().format('YYYY')) + 2}</option>
+                        <option value={parseInt(moment().format('YYYY')) + 3}>{parseInt(moment().format('YYYY')) + 3}</option>
+                    </TextField>
+                </div>
+                
+            </div>
+             
+            
             {courses.length===0 ? <h4 className={`text-center mt-5 no-data-found`}>No Data Found <SentimentDissatisfiedOutlined /></h4> :
             <div className="w-100 my-4 d-flex flex-column justify-content-between align-items-center course-container px-lg-5 px-md-4 px-1 mx-auto">
                 <div className="w-100 d-flex  align-items-center py-0 header">
                     {/* <span><Fab className={"col-1 fab-button " + (course.done ? "completed" :"not_completed")} ><AssignmentTurnedInOutlined className={(course.done ? "completed" :"not_completed")} /></Fab></span> */}
                     <span className="col-1 text-center">{"#"}</span>
                     <span className="col-2 text-center">{"Code"}</span>
-                    <span className="col-3 text-center" style={{textAlign: "right"}}>{"Name"}</span>
+                    <span className="col-3 text-center">{"Name"}</span>
                     <span className="col-2 text-center">{"Credits"}</span>
-                    <span className="col-3 text-center" >{"School"}</span>
+                    <span className="col-2 text-center" >{"Semester"}</span>
+                    <span className="col-1 text-center" >{"Year"}</span>
                     <span className="col-1 text-center"></span>
                 </div>
                {courses.slice((10*page),Math.min(10*(page+1),courses.length)).map((course,i) => 
                         <span key={course._id} className="w-100 course-details">
                             <div className="w-100 d-flex  align-items-center course py-0">
                                 <span className="col-1 text-center">{i+1}</span>
-                                <span className="col-2 text-center">{course.courseCode}</span>
-                                <span className="col-3 text-center">{course.courseName}</span>
-                                <span className="col-2 text-center completed" style={{backgroundColor:"white"}}><li>{course.credits}</li></span>
-                                <span className="col-3 text-center" >{course.school?.toUpperCase()}</span>
+                                <span className="col-2 text-center">{course.course[0].courseCode}</span>
+                                <span className="col-3 text-center">{course.course[0].courseName}</span>
+                                <span className="col-2 text-center completed" style={{backgroundColor:"white"}}><li>{course.course[0].credits}</li></span>
+                                <span className="col-2 text-center" >{course.semester}</span>
+                                <span className="col-1 text-center" >{course.year}</span>
                                 <span className="col-1 text-center">{courseDescriptionOpen!==i ? <NavigateNextOutlined onClick={()=> setCourseDescriptionOpen(i)} style={{color: "lightgrey",cursor: 'pointer'}} /> : <ExpandLessOutlined onClick={()=> setCourseDescriptionOpen(-1)} style={{color: "lightgrey",cursor: 'pointer'}} />}</span>
                             </div>
                             {courseDescriptionOpen===i && <div className="w-100 mt-4 ps-3 mb-3 course-description">
 
-                                {user.isAdmin && <div className="mt-3 mb-3 d-flex justify-content-end align-items-center flex-wrap me-3">
-                                    <Button variant="outlined" 
-                                    onClick={async () => {
-                                        await setCourseUpdateDetails(course);
-                                        setOpenOperationDialog(true);
-                                    }} 
-                                    startIcon={<EditOutlined />}>Edit</Button>
-                                    <Button variant="contained" 
-                                    onClick={() => {setConfirmDeleteDialog({
-                                        open: true,
-                                        idx: course._id
-                                    })}} 
-                                    startIcon={<DeleteOutlined />} className="delete-btn">Delete</Button>
-                                </div>}
-
                                 <h5>Description:</h5>
-                                <p className="px-3">{course.courseDescription}</p>
+                                <p className="px-3">{course.course[0].courseDescription}</p>
                                 <h5 className="mt-2">Prerequisites:</h5>
-                                <p className="px-3">{course.prerequisites.map((pre,i) => 
-                                    `${pre}${i!==course.prerequisites.length-1 ? ",": ""}`
+                                <p className="px-3">{course.course[0].prerequisites.map((pre,i) => 
+                                    `${pre}${i!==(course.course[0].prerequisites.length - 1) ? ",": ""}`
                                 )}</p>
                                 <h5>Faculty:</h5>
-                                <p className="px-3">{course.faculty}</p>
+                                <p className="px-3">{course.course[0].faculty}</p>
                                 <h5 className="mt-2">Category:</h5>
-                                <p className="px-3">{course.categoryIds.map((pre,i) => 
-                                    `${pre}${i!==course.categoryIds.length-1 ? ",": ""}`
+                                <p className="px-3">{course.course[0].categoryIds.map((pre,i) => 
+                                    `${pre}${i!==course.course[0].categoryIds.length-1 ? ",": ""}`
                                 )}</p>
                                 <h5 className="mt-2">Schedule:</h5>
-                                <p className="px-3 d-flex flex-column">{course.schedule.map((pre,i) => 
+                                <p className="px-3 d-flex flex-column">{course.course[0].schedule.map((pre,i) => 
                                     <p>{`${Days[pre.day]}  ${pre.time}`}</p>
                                 )}</p>
                                 <h5 className="mt-2">Ratings:</h5>
 
-                                {course.ratings.length!==0 &&
+                                {course.course[0].ratings.length!==0 &&
                                 <>
-                                <h4 className="ps-3 d-flex align-items-center"><span className="me-2">{getRating(course)}.0</span> <Rating readonly={true} value={getRating(course)} /></h4>
+                                <h4 className="ps-3 d-flex align-items-center"><span className="me-2">{getRating(course.course[0])}.0</span> <Rating readonly={true} value={getRating(course.course[0])} /></h4>
                                 
                                 {courseRatingOpen!==i ? <Button color="primary" onClick={() => setCourseRatingOpen(i)} startIcon={<Add />}>Show Reviews</Button> : <Button color="primary" onClick={() => setCourseRatingOpen(-1)} startIcon={<RemoveOutlined />}>Hide Reviews</Button>}
                                 </>}
 
                                 {courseRatingOpen===i && <div className="mt-3 d-flex flex-column rating-container">
-                                    {course.ratings.map((rate,k) => 
+                                    {course.course[0].ratings.map((rate,k) => 
                                         <span key={k} className="ms-3 d-flex flex-column"><Rating readonly={true} value={rate.rating} /> {rate.comment}</span>
                                     )}
                                         
@@ -308,7 +302,9 @@ export default function Courses() {
                                     
 
                             </div>}
+                       
                         </span>
+                    
                     )}
 
                 <div className="w-100 d-flex justify-content-end align-items-center py-0 me-2">
@@ -321,8 +317,8 @@ export default function Courses() {
             </div>
             }</>
             }
-            <Operation open={openOperationDialog} FetchCourses={FetchCourses} updateCourse={UpdateCourseItem} course={courseUpdateDetails} close={CloseDialog} />
-            <ConfirmDialog open={ConfirmDeleteDialog.open} item={"Course"} close={CloseConfirmDeleteDialog} action={() => DeleteCourse(ConfirmDeleteDialog.idx)} />
+            {/* <Operation open={openOperationDialog} FetchCourses={FetchCourses} updateCourse={UpdateCourseItem} course={courseUpdateDetails} close={CloseDialog} /> */}
+            {/* <ConfirmDialog open={ConfirmDeleteDialog.open} item={"Course"} close={CloseConfirmDeleteDialog} action={() => DeleteCourse(ConfirmDeleteDialog.idx)} /> */}
         </>
     )
 }

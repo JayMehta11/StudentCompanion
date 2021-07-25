@@ -20,6 +20,16 @@
   border-radius: 10px;
 }
 
+.student-container .hindrence {
+  display: block;
+  -webkit-transform: translate(-1000px, -1000px) !important;
+          transform: translate(-1000px, -1000px) !important;
+  height: 0 !important;
+  width: 0 !important;
+  z-index: 0 !important;
+  margin: -6px !important;
+}
+
 .student-container .student-details {
   background-color: white;
   border-radius: 10px;
@@ -32,6 +42,7 @@
 }
 
 .student-container .student-details .student span {
+  overflow-x: scroll;
   font-style: normal;
   font-weight: 600;
   font-size: 14px;
@@ -40,9 +51,10 @@
   font-family: 'Roboto Slab';
   color: #404040;
   border: none;
+  padding: 0rem 0.3rem !important;
   white-space: nowrap;
-  padding-top: 5px !important;
-  padding-bottom: 5px !important;
+  padding-top: 7px !important;
+  padding-bottom: 7px !important;
 }
 
 .student-container .student-details .student span .fab-button {

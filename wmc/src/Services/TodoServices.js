@@ -83,7 +83,7 @@ async function setReminder(schedule,data){
             "Content-Type" : "application/json"
         },
         body: JSON.stringify({
-            schedule: `${d.getSeconds()} ${d.getMinutes()} ${d.getHours()} ${d.getDate()} ${d.getMonth()} ${d.getDay()}`,
+            schedule: `${d.getSeconds()} ${d.getMinutes()} ${d.getHours()} ${d.getDate()} ${d.getMonth() + 1} ${d.getDay()}`,
             emailId: data.emailId,
             task: data.task
         })

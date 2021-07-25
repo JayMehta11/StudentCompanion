@@ -1,21 +1,24 @@
 import Todo from "./components/Todos/Todo"
 import Courses from "./components/Courses/Courses"
 import StudentEnroll from "./components/StudentEnroll/StudentEnroll"
+import MyCourses from "./components/MyCourses/MyCourses"
 
 export const NavigationAdmin = [
     "Todos",
-    "Courses"
+    "Courses",
+    "Students"
 ]
 
 export const Navigations = [
     "Todos",
-    "Course",
     "My Courses",
+    "Course",
     "Time Table"
 ]
 
 export const NavigationComponent = [
     <Todo />,
+    <MyCourses />,
     <Courses />
 ]
 

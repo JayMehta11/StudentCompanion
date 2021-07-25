@@ -35,16 +35,18 @@ let mailOptions = {
 };
 
 // e-mail transport configuration
-let transporter = nodemailer.createTransport({
-	service: 'gmail',
-	auth: {
-	  user: 'guide.studentcompanion@gmail.com',
-	  pass: 'Abc@123456'
-	}
-});
+
 
 app.post('/reminder',(req,res) => {
-	let task = cron.schedule(req.body.schedule,() => {
+	cron.schedule(req.body.schedule,() => {
+		let transporter = nodemailer.createTransport({
+			service: "gmail",
+			secure: false,
+			auth: {
+				user: process.env.gmailId,
+				pass: process.env.gmailPass
+			}
+		});
 		transporter.sendMail({
 			from: 'guide.studentcompanion@gmail.com',
 			to: req.body.emailId,
@@ -52,8 +54,6 @@ app.post('/reminder',(req,res) => {
 			text: `This mail is sent to inform you that your task ${req.body.task} is still pending! Please complete it`
 		})
 	})
-
-	task.start()
 	res.json({
 		status: true,
 		message: "Reminder set"
@@ -63,7 +63,7 @@ app.post('/reminder',(req,res) => {
 })
 
 app.post('/add', (req, res) => {
-	var decoded = jwt.verify(req.headers.authorization, '12345');
+	var decoded = jwt.verify(req.headers.authorization, process.env.secret);
 	let createdat = parseInt(new Date().getTime() / 1000)
 	const todo = new Todo({
 		student_id: decoded.id,
@@ -136,7 +136,7 @@ app.post('/delete', (req, res) => {
 
 
 app.post('/get', (req, res) => {
-	const decoded = jwt.verify(req.headers.authorization, '12345');
+	const decoded = jwt.verify(req.headers.authorization, process.env.secret);
 	let query = {
 		student_id: decoded.id
 	}

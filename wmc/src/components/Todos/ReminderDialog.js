@@ -14,6 +14,12 @@ export default function ReminderDilaog(props) {
     })
     const [reminderDate,setReminderDate] = useState("")
     const {setGlobalLoading} = useContext(GlobalLoadingContext)
+    useEffect(() => {
+        setTodoDetails({
+            task: props.task,
+            emailId: props.emailId
+        })
+    },[props.task,props.emailId])
     let SetReminder = async () => {
         setGlobalLoading(true);
         try{

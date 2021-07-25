@@ -82,12 +82,34 @@ async function deleteCourse(idx){
         }
     })
 }
-async function getCourse(){
+async function getCourse(search=""){
     return fetch('http://localhost:5000/api/course/get',{
         method: "POST",
         headers: {
             "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+            search: search
+        })
+    }).then(res => res.json()).catch(err => {
+        return {
+            status: false,
+            message: "Unable to get Course"
         }
+    })
+}
+
+async function getEnrolledIn(semester="",year=""){
+    return fetch('http://localhost:5000/api/course/enrolledIn',{
+        method: "POST",
+        headers: {
+            "Content-Type" : "application/json",
+            "authorization": localStorage.getItem("StudentToken")
+        },
+        body: JSON.stringify({
+            semester: semester,
+            year: year
+        })
     }).then(res => res.json()).catch(err => {
         return {
             status: false,
@@ -128,4 +150,4 @@ async function enrollStudents(data,otherData,m){
 
 
 
-export {addCourse, getCourse,updateCourse,deleteCourse,addRating, enrollStudents}
+export {addCourse, getCourse,updateCourse,deleteCourse,addRating, enrollStudents,getEnrolledIn}

@@ -232,7 +232,7 @@ export default function Todo() {
             </div>
             }</> 
             }
-            <ReminderDilaog open={openReminderDialog.open} task={openReminderDialog.task} emailId={openReminderDialog.emailId} close={CloseReminderDialog} />
+            {openReminderDialog.open && <ReminderDilaog open={openReminderDialog.open} task={openReminderDialog.task} emailId={openReminderDialog.emailId} close={CloseReminderDialog} />}
             <OperationDialog close={CloseDialog} open={openOperationDialog} todo={todoUpdateDetails} updateTodo={UpdateTodoItem} FetchTodos={FetchTodos} />
             <ConfirmDialog open={ConfirmDeleteDialog.open} item={"Course"} close={CloseConfirmDeleteDialog} action={() => DeleteTodo(ConfirmDeleteDialog.idx)} />
         </>

@@ -19,6 +19,17 @@
         color: rgb(17, 50, 240);
         border-radius: 10px;
     }
+    .hindrence{
+        display: block;
+        // transform: scale(0) !important;
+        // transform-origin: -500px -500px;
+        transform: translate(-1000px,-1000px) !important;
+        height: 0 !important;
+        width: 0 !important;
+        z-index: 0 !important;
+        // visibility: hidden;
+        margin: -6px !important;
+    }
     .student-details{
         background-color: white;
         border-radius: 10px;
@@ -28,6 +39,7 @@
             background-color: white;
             border-radius: 10px;
             span{
+                overflow-x: scroll;
                 font-style: normal;
                 font-weight: 600;
                 font-size: 14px;
@@ -40,10 +52,10 @@
                 // vertical-align: middle;
                 color: #404040;
                 border: none;
-                // padding: 0rem 0.3rem !important;
+                padding: 0rem 0.3rem !important;
                 white-space: nowrap;
-                padding-top: 5px !important;
-                padding-bottom: 5px !important;
+                padding-top: 7px !important;
+                padding-bottom: 7px !important;
                 .fab-button{
                     box-shadow: none;
                     width: 40px;
