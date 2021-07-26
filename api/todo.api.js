@@ -43,8 +43,8 @@ app.post('/reminder',(req,res) => {
 			service: "gmail",
 			secure: false,
 			auth: {
-				user: process.env.emailId,
-				pass: process.env.emailPass
+				user: process.env.mailId,
+				pass: process.env.mailPass
 			}
 		});
 		transporter.sendMail({
