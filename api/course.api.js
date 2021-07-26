@@ -226,7 +226,7 @@ app.post('/enrolledIn', (req, res) => {;
 		query['semester'] = req.body.semester
 	}
 	if(req.body.year !== "" && req.body.year !== undefined){
-		query['year'] = req.body.year
+		query['year'] = parseInt(req.body.year)
 	}
 	CourseEnrollment.aggregate([
 		{$match: query},
