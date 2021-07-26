@@ -27,17 +27,18 @@ const Todo = mongoose.model('todo');
 const cron = require('node-cron');
 const nodemailer = require('nodemailer');
 
-let mailOptions = {
-	from: '',
-	to: '<TO_EMAIL_ADDRESS>',
-	subject: 'Email from Node-App: A Test Message!',
-	text: 'Some content to send'
-};
+// let mailOptions = {
+// 	from: '',
+// 	to: '<TO_EMAIL_ADDRESS>',
+// 	subject: 'Email from Node-App: A Test Message!',
+// 	text: 'Some content to send'
+// };
 
-// e-mail transport configuration
+// // e-mail transport configuration
 
 
 app.post('/reminder',(req,res) => {
+	console.log("outside",req.body,process.env.mailId,process.env.mailPass)
 	cron.schedule(req.body.schedule,() => {
 		console.log("enter",process.env.mailId,process.env.mailPass)
 		let transporter = nodemailer.createTransport({
