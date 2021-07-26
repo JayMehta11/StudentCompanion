@@ -39,6 +39,7 @@ let mailOptions = {
 
 app.post('/reminder',(req,res) => {
 	cron.schedule(req.body.schedule,() => {
+		console.log("enter",process.env.mailId,process.env.mailPass)
 		let transporter = nodemailer.createTransport({
 			service: "gmail",
 			secure: false,
