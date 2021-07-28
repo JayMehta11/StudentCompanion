@@ -1,5 +1,5 @@
 import { Button, IconButton, TextField } from '@material-ui/core'
-import { Add, CheckCircle, ExpandLessOutlined, FirstPageOutlined, LastPageOutlined, NavigateBeforeOutlined, NavigateNextOutlined, RemoveOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons'
+import { Add, CheckCircle, ExpandLessOutlined, FirstPageOutlined, LastPageOutlined, LocalConvenienceStoreOutlined, NavigateBeforeOutlined, NavigateNextOutlined, RemoveOutlined, SentimentDissatisfiedOutlined } from '@material-ui/icons'
 
 import * as moment from 'moment'
 import React, { useContext, useEffect, useRef, useState } from 'react'
@@ -7,7 +7,7 @@ import PulseLoader from 'react-spinners/PulseLoader'
 
 import { toast } from 'react-toastify'
 import { GlobalLoadingContext } from '../../Context/GlobalLoadingContext'
-
+import { PieChart } from 'react-minimal-pie-chart';
 
 import { currentUser } from '../../Services/AuthServices'
 import { addRating, getEnrolledIn } from '../../Services/CourseServices'
@@ -25,7 +25,8 @@ export default function MyCourses() {
     
     const {setGlobalLoading} = useContext(GlobalLoadingContext)
     
-    // const [creditsDistribution]
+    const [creditsDistribution,setCreditsDistribution] = useState(false);
+    const [creditsDistributionData,setCreditsDistributionData] = useState([]);
     
     
     const [user,setUser] = useState(currentUser.value)
@@ -47,7 +48,11 @@ export default function MyCourses() {
 
     
     
-    
+    const colors = [
+        // "#004c6d","#346888","#5886a5","#7aa6c2","#9dc6e0","#c1e7ff"
+        // "#8CE68C","#ABF1BC","#CFFFF6","#AEE7F8","#87CDF6"
+        "#1fe074","#00c698","#00a9b5","#008ac5","#0069c0","#0045a5","#0b1d78"
+    ]
     
     
     
@@ -60,8 +65,10 @@ export default function MyCourses() {
         let course = document.querySelectorAll(".course-details");
         let coursesContainer = document.querySelector(".course-container");
         let mainContainer = document.querySelector("#main-container")
+        let header = document.querySelector(".header")
         if(course !== undefined && coursesContainer!==undefined && course.length > 0){
             if(mainContainer.offsetWidth < course[0].offsetWidth){
+                
                 for(let i=0;i<course.length;i++){
                     course[i].style.transform = `scaleX(${(mainContainer.offsetWidth / course[i].offsetWidth) - 0.003})`
                     course[i].style.transformOrigin = "center 0%";
@@ -80,7 +87,6 @@ export default function MyCourses() {
         }
         
     }
-    console.log(courses)
     let FetchCourses = async () => {
         if(user!=="loading" && user!==null){
 
@@ -89,16 +95,40 @@ export default function MyCourses() {
         try{
             let CourseResponse = await getEnrolledIn(semester,year);
             setLoading(false);
-            console.log(CourseResponse)
             if(CourseResponse.status){
                 let temp = 0;
                 CourseResponse.enrollments.map(c => {
                     temp += parseInt(c.course[0].credits)
                 })
                 setCredits(temp)
-                setcourses(CourseResponse.enrollments)
+                setcourses(CourseResponse.enrollments);
+                let tp = new Map();
+                CourseResponse.enrollments.map(course => {
+                    course.course[0].categoryIds.map(c => {
+                        let x = tp.get(c);
+                        if(x){
+                            tp.set(c,parseInt(parseInt(x) + parseInt(course.course[0].credits)));
+                        }else{
+                            tp.set(c,parseInt(course.course[0].credits));
+                        }
+                    })
+                })
+                let y = [];
+                let count=0;
+                for (let [key, value] of tp) {
+                    y.push({
+                        title: `${key}`,
+                        value: parseInt(value),
+                        color: colors[count]
+                    })
+                    count++;
+                }
+                
+                setCreditsDistribution(tp)
+                setCreditsDistributionData(y);
 
             }else{
+                
                 setcourses([])
                 toast.error("Unable to get Courses") 
             }
@@ -140,7 +170,7 @@ export default function MyCourses() {
         <>
         {courses==="loading" || loading ? <div className="w-100 mt-4 text-center"><PulseLoader size={15} margin={2} color="#36D7B7" /></div> :
             <>
-            <div className="w-100 mt-4 px-lg-5 px-md-4 px-1 d-flex justify-content-between align-items-end">
+            <div className="w-100 mt-4 px-lg-5 px-md-4 px-1 d-flex flex-wrap justify-content-lg-between justify-content-md-between justify-content-evenly align-items-end">
                 <Button className="credits-button" variant="contained" startIcon={<CheckCircle style={{color: "rgb(99, 231, 134)"}} />} disabled>
                     credits: {credits}
                 </Button>
@@ -184,7 +214,43 @@ export default function MyCourses() {
                 
             </div>
              
-            
+           {/* {creditsDistribution!==false && <div className="mx-auto my-3 d-flex justify-content-center align-items-center" style={{color: "white",maxWidth: "200px",maxHeight: "200px"}}>
+                <span><PieChart 
+                    data = {creditsDistributionData}
+                      label={(props) => { return props.dataEntry.title;}}
+                      labelStyle={{
+                        fontSize: '8px',
+                        fontWeight: "bold"
+                      }}  
+                      animate={true}
+                /></span>
+            </div>} */}
+
+            {(creditsDistribution!==false && creditsDistributionData.length!==0) && <div className="mx-lg-5 mx-md-4 mx-2 mt-5 pt-2 shadow chart-container">
+                <h3 className="text-center">Credits Distribution</h3>
+                <div className="d-flex mt-3 justify-content-center align-items-center flex-lg-row flex-md-column-reverse flex-column-reverse">
+                    <div className="col-6 my-3 d-flex justify-content-center align-items-center">
+                        <span className="d-flex w-50 flex-column">
+                            {creditsDistributionData.map(c => 
+                                <span key={c.title} className="d-flex justify-content-between align-items-center">
+                                    <p className="d-flex flex-column">{c.title}<span style={{backgroundColor: c.color}}></span></p>
+                                    {c.value}
+                                </span>
+                            )}
+                        </span>
+                    </div>
+                    <div className="col-6 my-3 d-flex justify-content-center align-items-center mx-auto" >
+                    <span style={{maxWidth: '200px',maxHeight: "200px"}}>
+                        <PieChart 
+                            data = {creditsDistributionData}  
+                            animate={true}
+                        />
+                    </span>
+                </div>
+            </div>
+                
+                
+            </div>}
             {courses.length===0 ? <h4 className={`text-center mt-5 no-data-found`}>No Data Found <SentimentDissatisfiedOutlined /></h4> :
             <div className="w-100 my-4 d-flex flex-column justify-content-between align-items-center course-container px-lg-5 px-md-4 px-1 mx-auto">
                 <div className="w-100 d-flex  align-items-center py-0 header">

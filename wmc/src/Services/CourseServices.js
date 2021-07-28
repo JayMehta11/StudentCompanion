@@ -22,13 +22,14 @@ async function addCourse(courseDetails){
         }
     })
 }
-async function updateCourse(courseDetails){
+async function updateCourse(courseDetails,idx){
     return fetch('https://student-companion-backend.herokuapp.com/api/course/update',{
         method: "POST",
         headers: {
             "Content-Type" : "application/json"
         },
         body: JSON.stringify({
+            _id: idx,
             courseName: courseDetails.courseName,
             courseCode: courseDetails.courseCode,
             credits: courseDetails.credits,
@@ -120,9 +121,7 @@ async function getEnrolledIn(semester="",year=""){
 
 async function enrollStudents(data,otherData,m){
     let students = [];
-    console.log(m)
     data.map(d => {
-        console.log(d)
         students.push({
             student: d.student,
             year: parseInt(otherData.year),

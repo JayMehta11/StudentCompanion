@@ -124,7 +124,6 @@ export default function Operation(props) {
         start.current.value = ""
         end.current.value = ""
     }
-    console.log(courseDetails)
 
     let AddCourse = async () => {
         setGlobalLoading(true);
@@ -134,9 +133,9 @@ export default function Operation(props) {
                 toast.success(AddCourseResponse.message)
                 setGlobalLoading(false)
                 await props.FetchCourses()
+                setCourseDetails(init)
                 props.close()
             }else{
-                console.log(AddCourseResponse)
                 toast.error(AddCourseResponse.message)
                 setGlobalLoading(false)
             }
@@ -148,7 +147,7 @@ export default function Operation(props) {
     let UpdateCourse = async () => {
         setGlobalLoading(true)
         try{
-            let UpdateCourseResponse = await updateCourse(courseDetails);
+            let UpdateCourseResponse = await updateCourse(courseDetails,props.course._id);
             setGlobalLoading(false)
             if(UpdateCourseResponse.status){
                 toast.success(UpdateCourseResponse.message)
@@ -267,7 +266,7 @@ export default function Operation(props) {
                             inputRef={ScheduleDay} >
 
                                 {Days.map((day,i) => 
-                                    <option value={i}>{day}</option>
+                                    <option key={i} value={i}>{day}</option>
                                 )}
                             </TextField>
                             <TextField label="ST"  focused type="time" className="me-2" inputRef={start} />
